@@ -1,0 +1,255 @@
+<!DOCTYPE html><html class="light dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Calendar - ZenStudy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"on-secondary-container": "#a3c0a0", "inverse-surface": "#e4e2e2", "outline-variant": "#42474d", outline: "#8c9198", "secondary-fixed-dim": "#b0ceae", "surface-container-lowest": "#0e0e0e", "on-primary-container": "#002d45", "secondary-container": "#354f36", "surface-dim": "#131314", "secondary-fixed": "#ccebc8", "surface-container-low": "#1b1c1c", "tertiary-fixed": "#e5e2db", "error-container": "#93000a", "on-tertiary-fixed": "#1c1c18", "on-secondary-fixed-variant": "#334d34", "on-error": "#690005", "primary-fixed-dim": "#a1cbef", "on-surface-variant": "#c2c7ce", "surface-tint": "#a1cbef", "tertiary-container": "#92918b", "on-tertiary-fixed-variant": "#474742", "on-primary-fixed-variant": "#1c4b69", error: "#ffb4ab", "inverse-primary": "#376282", surface: "#131314", background: "#131314", "on-primary": "#00344f", "tertiary-fixed-dim": "#c9c6c0", "primary-fixed": "#cae6ff", "surface-container": "#1f2020", "on-tertiary": "#31312c", "on-secondary-fixed": "#07200b", "inverse-on-surface": "#303030", tertiary: "#c9c6c0", "surface-bright": "#393939", "on-secondary": "#1d361f", "surface-container-high": "#2a2a2a", "on-tertiary-container": "#2a2a26", "primary-container": "#6b95b7", "on-primary-fixed": "#001e30", "surface-container-highest": "#343535", "on-background": "#e4e2e2", "on-surface": "#e4e2e2", "surface-variant": "#343535", primary: "#a1cbef", "on-error-container": "#ffdad6", secondary: "#b0ceae"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {xs: "4px", "margin-mobile": "16px", "margin-desktop": "64px", lg: "48px", xl: "80px", gutter: "24px", sm: "12px", base: "8px", md: "24px"}, fontFamily: {"headline-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "label-md": ["Inter"], "body-lg": ["Inter"], "body-md": ["Inter"], display: ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "label-sm": ["Inter"], headline: ["Plus Jakarta Sans"], body: ["Inter"], label: ["Inter"]}, fontSize: {"headline-md": ["24px", {lineHeight: "1.4", fontWeight: "600"}], "headline-lg": ["32px", {lineHeight: "1.3", fontWeight: "600"}], "label-md": ["14px", {lineHeight: "1.4", letterSpacing: "0.01em", fontWeight: "500"}], "body-lg": ["18px", {lineHeight: "1.6", fontWeight: "400"}], "body-md": ["16px", {lineHeight: "1.5", fontWeight: "400"}], display: ["48px", {lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700"}], "headline-lg-mobile": ["24px", {lineHeight: "1.3", fontWeight: "600"}], "label-sm": ["12px", {lineHeight: "1.2", fontWeight: "600"}]}}}};</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex antialiased">
+<!-- SideNavBar (Web) -->
+<nav class="hidden md:flex flex-col h-screen fixed left-0 top-0 p-md bg-surface-container-low border-r border-outline-variant w-64 z-40">
+<div class="flex items-center gap-sm mb-lg">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-md text-headline-md">Z</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary">ZenStudy</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Stay Focused</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-sm bg-primary text-on-primary rounded-xl px-md py-sm mb-lg hover:bg-surface-tint transition-colors">
+<span class="material-symbols-outlined" data-weight="fill">add</span>
+<span class="font-label-md text-label-md">New Task</span>
+</button>
+<div class="flex flex-col gap-xs flex-grow">
+<!-- Inactive -->
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-colors rounded-xl active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">timer</span>
+<span class="font-label-md text-label-md">Focus</span>
+</a><a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-colors rounded-xl active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">today</span>
+<span class="font-label-md text-label-md">Today</span>
+</a>
+<!-- Active -->
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-xl px-md py-sm hover:bg-surface-container-high transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-weight="fill">calendar_month</span>
+<span class="font-label-md text-label-md">Calendar</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-colors rounded-xl active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Backlog</span>
+</a>
+</div>
+<div class="flex flex-col gap-xs mt-auto pt-md border-t border-outline-variant">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-container-high transition-colors rounded-xl active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings &amp; Help</span>
+</a>
+
+<div class="mt-sm flex items-center gap-sm px-md py-sm">
+<img alt="User profile avatar" class="w-8 h-8 rounded-full object-cover" data-alt="A close-up portrait of a serene young woman with natural makeup and dark hair pulled back. She is bathed in soft, diffused natural light in a bright, modern indoor setting, embodying a calm, focused, and minimal aesthetic that aligns with a high-end productivity app's design language." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8wmsq3h6GiCRlf0OCY74VVrjn7GCEGPXfcxB9TgSIHurY-5hBzD8Q6o2sisvuur3xGdUfVVt5rEQiHcYqrzoMaedfIlhy5tbHUYqyAbkqjs6_9TyDMyk_E6JanzKLFjQc0AJXJSSJDUup9iX4okIzeMleIVuyEt7F7u7FO8gsmu3ITTbJ53ixdWHjEA3jN_JiEgXhvYjnWUEzIbx34HQT4ku7FiCU-CyyC2hk3HsJ2T-i_tAJNSkUxqb3lwua8qDLiwWD4CTszAIg">
+<span class="font-label-md text-label-md text-on-surface">Alex M.</span>
+</div>
+</div>
+</nav>
+<!-- TopAppBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile py-md bg-background fixed top-0 left-0 z-40 transition-all duration-200 ease-in-out">
+<h1 class="font-headline-md text-headline-md text-primary">ZenStudy</h1>
+<div class="flex items-center gap-md text-on-surface-variant">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined">settings</span></button>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full object-cover" data-alt="A close-up portrait of a serene young woman with natural makeup and dark hair pulled back. She is bathed in soft, diffused natural light in a bright, modern indoor setting, embodying a calm, focused, and minimal aesthetic that aligns with a high-end productivity app's design language." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKmuUqZbi8GZoMy2n0GpwW5SIGsAAKSYRSut_xC0ORG1qV2fxyH-CKR-JQekh6E-qDqq4wS8SpzQOR9URxug5R8yGAPshpWvdy-f50NbSMQfsdtLqntbrE1uDNywKljYyUuBJEEwmxR-Wlq-eGfWG8zvJZbx9vK2iY52bdCKvV0L35q6poYGHKCKeXPuUU2AqwTVHUdDrZMHwM_9wrYB1liUFuT7LBSG3605EVwQ71tSZdUKd2SuMDGs6o0ws1U8D2Kd2QQB_o95oq">
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 pt-20 md:pt-0 px-margin-mobile md:px-margin-desktop py-lg pb-32 md:pb-lg flex flex-col xl:flex-row gap-lg transition-all duration-300">
+<!-- Calendar Section -->
+<section class="flex-1">
+<div class="flex items-center justify-between mb-lg">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">October 2023</h2>
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="px-sm py-xs rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container transition-colors border border-outline-variant">
+                        Today
+                    </button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Calendar -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_0_rgba(53,96,127,0.05)] border border-outline-variant/30 overflow-hidden">
+<!-- Days Header -->
+<div class="grid grid-cols-7 border-b border-outline-variant/30 bg-surface-container-low/50">
+<div class="py-sm text-center font-label-md text-label-md text-on-surface-variant">Sun</div>
+<div class="py-sm text-center font-label-md text-label-md text-on-surface-variant">Mon</div>
+<div class="py-sm text-center font-label-md text-label-md text-on-surface-variant">Tue</div>
+<div class="py-sm text-center font-label-md text-label-md text-on-surface-variant">Wed</div>
+<div class="py-sm text-center font-label-md text-label-md text-on-surface-variant">Thu</div>
+<div class="py-sm text-center font-label-md text-label-md text-on-surface-variant">Fri</div>
+<div class="py-sm text-center font-label-md text-label-md text-on-surface-variant">Sat</div>
+</div>
+<!-- Calendar Grid (Abbreviated for brevity, showing structure) -->
+<div class="grid grid-cols-7 grid-rows-6 auto-rows-[minmax(80px,auto)]"><!-- Row 1 -->
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">24</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">25</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">26</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">27</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">28</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">29</span></div>
+<div class="p-xs md:p-sm border-b border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">30</span></div>
+<!-- Row 2 -->
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto group-hover:text-primary transition-colors">1</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group relative">
+<span class="font-body-md text-body-md mb-auto group-hover:text-primary transition-colors">2</span>
+<div class="w-1.5 h-1.5 rounded-full bg-error absolute top-sm right-sm"></div>
+<div class="mt-xs hidden md:block"><div class="w-full h-1 rounded-full bg-error-container overflow-hidden"><div class="w-1/3 h-full bg-error"></div></div></div>
+</div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">3</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">4</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">5</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">6</span></div>
+<div class="p-xs md:p-sm border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">7</span></div>
+<!-- Row 3 -->
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">8</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">9</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">10</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">11</span></div>
+<div class="p-xs md:p-sm border-r border-b border-primary/30 bg-primary-container/10 text-on-surface min-h-[80px] flex flex-col cursor-pointer shadow-[inset_0_0_0_2px_theme(colors.primary)] rounded-md m-[1px]">
+<span class="font-body-md text-body-md mb-auto text-primary font-semibold">12</span>
+<div class="mt-xs flex flex-col gap-[2px]"><div class="h-1.5 rounded-full bg-secondary w-full"></div><div class="h-1.5 rounded-full bg-secondary-container w-3/4"></div></div>
+</div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">13</span></div>
+<div class="p-xs md:p-sm border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">14</span></div>
+<!-- Row 4 -->
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">15</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">16</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">17</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">18</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">19</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">20</span></div>
+<div class="p-xs md:p-sm border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group relative">
+<span class="font-body-md text-body-md mb-auto">21</span>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary absolute top-sm right-sm"></div>
+</div>
+<!-- Row 5 -->
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">22</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">23</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">24</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">25</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">26</span></div>
+<div class="p-xs md:p-sm border-r border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">27</span></div>
+<div class="p-xs md:p-sm border-b border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">28</span></div>
+<!-- Row 6 -->
+<div class="p-xs md:p-sm border-r border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">29</span></div>
+<div class="p-xs md:p-sm border-r border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">30</span></div>
+<div class="p-xs md:p-sm border-r border-outline-variant/20 bg-surface-container-lowest text-on-surface min-h-[80px] flex flex-col hover:bg-surface-container-low transition-colors cursor-pointer group"><span class="font-body-md text-body-md mb-auto">31</span></div>
+<div class="p-xs md:p-sm border-r border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">1</span></div>
+<div class="p-xs md:p-sm border-r border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">2</span></div>
+<div class="p-xs md:p-sm border-r border-outline-variant/20 bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">3</span></div>
+<div class="p-xs md:p-sm bg-surface-container-lowest/50 text-outline min-h-[80px] flex flex-col"><span class="font-body-md text-body-md mb-auto">4</span></div></div>
+</div>
+</section>
+<!-- Daily Detail Panel (Side Panel) -->
+<aside class="w-full xl:w-96 flex-shrink-0 bg-surface-container-lowest rounded-xl shadow-[0_8px_30px_0_rgba(53,96,127,0.1)] border border-outline-variant/20 p-md flex flex-col h-[calc(100vh-128px)] sticky top-margin-desktop">
+<div class="flex items-center justify-between mb-md">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Oct 12</h3>
+<p class="font-label-md text-label-md text-on-surface-variant">Thursday</p>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container text-outline xl:hidden transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Progress -->
+<div class="mb-lg">
+<div class="flex justify-between items-center mb-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Daily Focus</span>
+<span class="font-label-sm text-label-sm text-secondary">60%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 60%"></div>
+</div>
+</div>
+<!-- Task List -->
+<div class="flex-1 overflow-y-auto scrollbar-hide flex flex-col gap-sm">
+<!-- Completed Task -->
+<div class="p-sm rounded-lg border border-outline-variant/30 bg-surface-container-low/50 flex items-start gap-sm opacity-60">
+<div class="mt-0.5 w-5 h-5 rounded-md bg-secondary text-on-secondary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 14px; font-weight: bold;">check</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface line-through">Review Chapter 4 notes</p>
+<div class="flex gap-xs mt-xs">
+<span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary text-[10px] font-semibold">Biology</span>
+</div>
+</div>
+</div>
+<!-- Pending Task -->
+<div class="p-sm rounded-lg border border-outline-variant/50 bg-surface-container-lowest shadow-sm flex items-start gap-sm cursor-pointer hover:border-primary/50 transition-colors">
+<div class="mt-0.5 w-5 h-5 rounded-md border-2 border-outline-variant flex items-center justify-center"></div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Draft essay outline</p>
+<p class="font-label-sm text-label-sm text-error flex items-center gap-[2px] mt-xs">
+<span class="material-symbols-outlined" style="font-size: 12px;">warning</span> Overdue from Oct 10
+                        </p>
+</div>
+</div>
+<!-- Future Task -->
+<div class="p-sm rounded-lg border border-outline-variant/50 bg-surface-container-lowest shadow-sm flex items-start gap-sm cursor-pointer hover:border-primary/50 transition-colors">
+<div class="mt-0.5 w-5 h-5 rounded-md border-2 border-outline-variant flex items-center justify-center"></div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Math Problem Set 3</p>
+<div class="flex gap-xs mt-xs">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/50 text-secondary text-[10px] font-semibold">Calculus</span>
+</div>
+</div>
+</div>
+</div>
+<button class="mt-md w-full py-sm rounded-lg border-2 border-dashed border-outline-variant text-on-surface-variant font-label-md text-label-md hover:border-primary hover:text-primary transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined">add</span> Add Task to Oct 12
+            </button>
+</aside>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm pb-safe pt-xs md:hidden bg-surface shadow-[0_-4px_20px_0_rgba(53,96,127,0.15)] rounded-t-xl h-16">
+<!-- Inactive -->
+<a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high rounded-full transition-all scale-95 active:scale-90 w-16 h-full" href="#">
+<span class="material-symbols-outlined">today</span>
+<span class="font-label-sm text-label-sm mt-1">Today</span>
+</a>
+<!-- Active -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-1 hover:bg-surface-container-high transition-all scale-95 active:scale-90 h-12" href="#">
+<span class="material-symbols-outlined" data-weight="fill">calendar_month</span>
+<span class="font-label-sm text-label-sm mt-0.5">Calendar</span>
+</a>
+<!-- Inactive -->
+<a class="flex flex-col items-center justify-center text-outline hover:bg-surface-container-high rounded-full transition-all scale-95 active:scale-90 w-16 h-full" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm mt-1">Backlog</span>
+</a>
+</nav>
+
+
+</body></html>
