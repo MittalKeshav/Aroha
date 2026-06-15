@@ -146,7 +146,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
             if (data.displayName) {
                profileName = data.displayName;
                // Update the profile silently in the background if it differs
-               setUserProfile(prev => prev ? { ...prev, displayName: profileName } : null);
+               setUserProfile(prev => prev ? { ...prev, displayName: profileName as string } : null);
             }
             if (data.settings) setAppSettings(data.settings);
           } else {
