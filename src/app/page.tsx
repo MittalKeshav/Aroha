@@ -106,7 +106,7 @@ export default function Home() {
     <div className="flex-1 p-margin-mobile md:p-margin-desktop max-w-7xl mx-auto w-full">
       
       {/* Motivational Banner Area */}
-      <div className="mb-lg relative w-full h-[200px] md:h-[280px] rounded-3xl overflow-hidden shadow-ambient-l1 group">
+      <div className="mb-lg relative w-full h-[140px] md:h-[180px] lg:h-[220px] rounded-3xl overflow-hidden shadow-ambient-l1 group">
         <img 
           src={imageUrl} 
           alt="Motivational Zen Environment" 

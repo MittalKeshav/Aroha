@@ -239,9 +239,9 @@ export default function Focus() {
             </button>
           </div>
 
-          <div className="relative flex items-center justify-center mb-6 mt-12">
+          <div className="relative flex items-center justify-center mb-6 mt-8 md:mt-12 w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[450px] lg:h-[450px] mx-auto">
             <svg 
-              className="absolute w-[500px] h-[500px]" 
+              className="absolute inset-0 w-full h-full" 
               viewBox="0 0 100 100"
               style={{ opacity: viewMode === 'timer' ? 1 : 0, transition: 'opacity 0.3s' }}
             >
@@ -255,42 +255,42 @@ export default function Focus() {
                 style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
               ></circle>
             </svg>
-            <div className={`glass-panel w-[400px] h-[400px] rounded-full flex flex-col items-center justify-center relative z-10 shadow-2xl transition-all duration-500 ${isViewOnBreak ? 'border-secondary/30' : ''}`} style={{ background: 'rgba(42, 42, 42, 0.4)', backdropFilter: 'blur(12px)', border: isViewOnBreak ? '1px solid rgba(161, 203, 239, 0.3)' : '1px solid rgba(140, 145, 152, 0.1)' }}>
+            <div className={`glass-panel w-[85%] h-[85%] rounded-full flex flex-col items-center justify-center relative z-10 shadow-2xl transition-all duration-500 ${isViewOnBreak ? 'border-secondary/30' : ''}`} style={{ background: 'rgba(42, 42, 42, 0.4)', backdropFilter: 'blur(12px)', border: isViewOnBreak ? '1px solid rgba(161, 203, 239, 0.3)' : '1px solid rgba(140, 145, 152, 0.1)' }}>
               
-              <span className={`text-label-lg font-label-lg mb-6 tracking-widest uppercase opacity-80 ${isViewOnBreak ? 'text-secondary' : 'text-primary'}`}>
+              <span className={`text-label-sm md:text-label-lg font-label-lg mb-2 md:mb-6 tracking-widest uppercase opacity-80 ${isViewOnBreak ? 'text-secondary' : 'text-primary'}`}>
                 {isViewOnBreak ? 'On Break' : (viewMode === 'timer' ? 'Deep Work' : 'Time Elapsed')}
               </span>
               
               {!isEditing ? (
                 <div 
                   onClick={() => { if(!isViewActive) setIsEditing(true); }}
-                  className={`text-[100px] md:text-[120px] leading-[1] font-display font-bold text-on-surface tracking-tighter transition-colors ${isViewActive ? 'cursor-default pointer-events-none' : 'cursor-pointer hover:text-primary'}`} 
+                  className={`text-6xl md:text-[80px] lg:text-[100px] leading-[1] font-display font-bold text-on-surface tracking-tighter transition-colors ${isViewActive ? 'cursor-default pointer-events-none' : 'cursor-pointer hover:text-primary'}`} 
                   style={{ textShadow: '0 0 40px rgba(161, 203, 239, 0.3)' }}
                   title={!isViewActive ? "Click to edit time" : ""}
                 >
                   {formatTimeDisplay(displayTime)}
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 md:gap-2">
                   <input 
                     type="number" 
                     value={editHours} 
                     onChange={e => setEditHours(e.target.value)} 
-                    className="w-32 text-[80px] text-center bg-surface-container-highest border border-outline-variant rounded-xl font-display font-bold text-on-surface focus:border-primary focus:outline-none"
+                    className="w-16 md:w-24 lg:w-32 text-4xl md:text-6xl lg:text-[80px] text-center bg-surface-container-highest border border-outline-variant rounded-xl font-display font-bold text-on-surface focus:border-primary focus:outline-none"
                     max="23"
                     min="0"
                   />
-                  <span className="text-[80px] font-display text-outline-variant">:</span>
+                  <span className="text-4xl md:text-6xl lg:text-[80px] font-display text-outline-variant">:</span>
                   <input 
                     type="number" 
                     value={editMinutes} 
                     onChange={e => setEditMinutes(e.target.value)} 
-                    className="w-32 text-[80px] text-center bg-surface-container-highest border border-outline-variant rounded-xl font-display font-bold text-on-surface focus:border-primary focus:outline-none"
+                    className="w-16 md:w-24 lg:w-32 text-4xl md:text-6xl lg:text-[80px] text-center bg-surface-container-highest border border-outline-variant rounded-xl font-display font-bold text-on-surface focus:border-primary focus:outline-none"
                     max="59"
                     min="0"
                   />
-                  <button onClick={handleEditSave} className="w-16 h-16 bg-primary rounded-full text-on-primary flex items-center justify-center ml-4 hover:bg-primary-container transition-colors">
-                    <span className="material-symbols-outlined text-[32px]">check</span>
+                  <button onClick={handleEditSave} className="w-10 h-10 md:w-16 md:h-16 bg-primary rounded-full text-on-primary flex items-center justify-center ml-2 md:ml-4 hover:bg-primary-container transition-colors">
+                    <span className="material-symbols-outlined text-xl md:text-[32px]">check</span>
                   </button>
                 </div>
               )}
