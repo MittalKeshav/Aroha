@@ -248,9 +248,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
-    // Using redirect. This guarantees NO popup blockers can interfere.
-    // It works flawlessly on production domains like Vercel.
-    await signInWithRedirect(auth, googleProvider);
+    // We MUST use popup. Redirect chains through firebaseapp.com get flagged by strict Antiviruses.
+    await signInWithPopup(auth, googleProvider);
   };
 
   const loginAsGuest = async (name: string) => {
