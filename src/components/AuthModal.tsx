@@ -52,10 +52,15 @@ export default function AuthModal() {
   };
 
   const handleGoogleSubmit = async () => {
+    // CRITICAL FIX: We MUST call loginWithGoogle() BEFORE any state updates like setLoading(true).
+    // React 18 delays state updates, which causes the browser to lose the "trusted click context" and block the popup!
+    const loginPromise = loginWithGoogle();
+    
     setLocalError('');
     setLoading(true);
+    
     try {
-      await loginWithGoogle();
+      await loginPromise;
     } catch (err: any) {
       console.error(err);
       setLocalError(err.message || 'Google Login failed.');

@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signInWithRedirect, 
+  signInWithPopup,
   getRedirectResult,
   signInAnonymously, 
   signOut,
