@@ -262,9 +262,42 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   };
 
   const logoutUser = async () => {
-    stopTimer();
-    // Give Firestore 500ms to push the final focus session data before killing the auth token
+    const prev = timerRef.current;
+    
+    // 1. If timer is ticking, explicitly await the Firebase save BEFORE destroying the token
+    if ((prev.isPlaying && !prev.isOnBreak) || prev.accumulatedSeconds >= 60) {
+      let elapsed = 0;
+      if (prev.isPlaying && !prev.isOnBreak) {
+        elapsed = Math.floor((Date.now() - (prev.startTime || Date.now())) / 1000);
+      }
+      const totalDuration = prev.accumulatedSeconds + elapsed;
+      
+      if (totalDuration >= 60 && auth.currentUser) {
+        const now = new Date();
+        const z = (n: number) => ('0' + n).slice(-2);
+        const dateAdded = `${now.getFullYear()}-${z(now.getMonth() + 1)}-${z(now.getDate())}`;
+        const newSession: FocusSession = {
+          duration: totalDuration, mode: prev.mode,
+          id: Date.now(), dateAdded, timestamp: Date.now()
+        };
+        try {
+          await setDoc(doc(db, `users/${auth.currentUser.uid}/sessions/${newSession.id}`), newSession);
+        } catch (err) {
+          console.error("Firestore Save Error on Logout:", err);
+        }
+      }
+    }
+
+    // 2. Stop the local timer which also clears the local backup
+    setActiveTimer({
+      ...prev, isPlaying: false, startTime: null, accumulatedSeconds: 0,
+      isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0,
+    });
+
+    // 3. Give React 500ms to flush state updates securely
     await new Promise(r => setTimeout(r, 500));
+    
+    // 4. Safely kill the auth token
     await signOut(auth);
   };
 
