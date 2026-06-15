@@ -293,6 +293,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       ...prev, isPlaying: false, startTime: null, accumulatedSeconds: 0,
       isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0,
     });
+    localStorage.removeItem('zenstudy_backup_session');
 
     // 3. Give React 500ms to flush state updates securely
     await new Promise(r => setTimeout(r, 500));
@@ -459,8 +460,6 @@ export function TasksProvider({ children }: { children: ReactNode }) {
           mode: state.mode,
           timestamp: state.isPlaying ? (state.startTime || Date.now()) : Date.now()
         }));
-      } else {
-        localStorage.removeItem('zenstudy_backup_session');
       }
     }, 1000);
     return () => clearInterval(interval);
@@ -530,6 +529,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       if (totalDuration >= 60) {
         addFocusSession({ duration: totalDuration, mode: prev.mode });
       }
+
+      localStorage.removeItem('zenstudy_backup_session');
 
       return {
         ...prev, isPlaying: false, startTime: null, accumulatedSeconds: 0,
