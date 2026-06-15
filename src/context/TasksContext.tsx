@@ -92,7 +92,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     targetSeconds: 25 * 60,
     isOnBreak: false,
     breakStartTime: null,
-    breakAccumulatedSeconds: 0
+    breakAccumulatedSeconds: 0,
+    notified30Sec: false
   });
   
   const [isLoaded, setIsLoaded] = useState(false);
