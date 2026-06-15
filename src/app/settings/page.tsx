@@ -20,7 +20,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex-1 h-[calc(100vh-theme(spacing.md)*2)] overflow-y-auto px-margin-mobile md:px-margin-desktop py-lg w-full">
+    <div className="flex-1 min-h-screen px-margin-mobile md:px-margin-desktop py-lg w-full">
       {/* Header Section */}
       <header className="mb-lg flex items-center gap-sm">
         <button aria-label="Go back" className="md:hidden p-2 rounded-full hover:bg-surface-container-high transition-colors">

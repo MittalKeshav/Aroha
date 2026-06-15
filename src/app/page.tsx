@@ -10,14 +10,19 @@ export default function Home() {
   // Daily Quote State
   const [quote, setQuote] = useState("Focus is not about saying yes to the things you have to do. It's about saying no to the hundreds of other good ideas that there are.");
   
-  // Daily Image Date Seed (Using Local Timezone)
-  const now = new Date();
-  const z = (n: number) => ('0' + n).slice(-2);
-  const todayISO = `${now.getFullYear()}-${z(now.getMonth() + 1)}-${z(now.getDate())}`;
-  const imageUrl = `https://picsum.photos/seed/${todayISO}/1200/400`;
+  // Daily Image Date Seed (Using Local Timezone safely inside useEffect)
+  const [todayISO, setTodayISO] = useState<string>('');
+
+  useEffect(() => {
+    const now = new Date();
+    const z = (n: number) => ('0' + n).slice(-2);
+    setTodayISO(`${now.getFullYear()}-${z(now.getMonth() + 1)}-${z(now.getDate())}`);
+  }, []);
+
+  const imageUrl = todayISO ? `https://picsum.photos/seed/${todayISO}/1200/400` : '';
 
   // Filter tasks for today
-  const todayTasks = tasks.filter(t => t.dateAdded === todayISO);
+  const todayTasks = todayISO ? tasks.filter(t => t.dateAdded === todayISO) : [];
 
   // Add task form state
   const [newTaskTitle, setNewTaskTitle] = useState('');
@@ -31,13 +36,16 @@ export default function Home() {
   const [additionalNotes, setAdditionalNotes] = useState('');
 
   useEffect(() => {
+    if (!todayISO) return;
     const notes = localStorage.getItem(`aroha_notes_${todayISO}`);
     if (notes) setAdditionalNotes(notes);
   }, [todayISO]);
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAdditionalNotes(e.target.value);
-    localStorage.setItem(`aroha_notes_${todayISO}`, e.target.value);
+    if (todayISO) {
+      localStorage.setItem(`aroha_notes_${todayISO}`, e.target.value);
+    }
   };
 
   useEffect(() => {
@@ -53,6 +61,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (!todayISO) return;
     // Fetch random quote
     fetch('https://dummyjson.com/quotes/random')
       .then(res => res.json())
@@ -107,11 +116,13 @@ export default function Home() {
       
       {/* Motivational Banner Area */}
       <div className="mb-lg relative w-full h-[140px] md:h-[180px] lg:h-[220px] rounded-3xl overflow-hidden shadow-ambient-l1 group">
-        <img 
-          src={imageUrl} 
-          alt="Motivational Zen Environment" 
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-105"
-        />
+        {imageUrl && (
+          <img 
+            src={imageUrl} 
+            alt="Motivational Zen Environment" 
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-105"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-lg w-full flex flex-col justify-end h-full z-10">
           <h2 className="text-display font-display text-white tracking-tight mb-2 drop-shadow-md">
@@ -144,7 +155,7 @@ export default function Home() {
                 <p className="text-body-md text-on-surface-variant">Use the panel on the right to add some tasks!</p>
               </div>
             ) : (
-              todayTasks.slice(0, 4).map(task => (
+              todayTasks.map(task => (
                 <div key={task.id} className="group relative glass-sub-panel rounded-2xl p-md transition-all hover:border-primary hover:shadow-[0_0_15px_rgba(255,165,0,0.2)]">
                   <div className="flex items-start gap-md">
                     <div className="pt-1 relative">
@@ -213,16 +224,6 @@ export default function Home() {
                   </div>
                 </div>
               ))
-            )}
-            
-            {todayTasks.length > 4 && (
-              <button 
-                onClick={() => setShowAllTasks(true)}
-                className="mt-2 text-primary font-label-md flex items-center justify-center gap-1 hover:underline transition-all py-2"
-              >
-                See More ({todayTasks.length - 4})
-                <span className="material-symbols-outlined text-[18px]">expand_more</span>
-              </button>
             )}
           </div>
 

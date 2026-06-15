@@ -27,7 +27,7 @@ export default function Backlog() {
   const hasTasks = backlogTasks.length > 0;
 
   return (
-    <div className="w-full flex flex-col relative overflow-hidden">
+    <div className="flex-1 w-full flex flex-col min-h-screen">
       <div className="flex-1 w-full pt-12 px-4 md:px-8 pb-32 max-w-7xl mx-auto flex flex-col gap-8 relative z-10">
         
         {/* Header Section */}

@@ -211,11 +211,11 @@ export default function Focus() {
   const isViewOnBreak = activeTimer.isOnBreak && viewMode === activeTimer.mode;
 
   return (
-    <div className="flex-grow relative h-[calc(100vh-theme(spacing.md)*2)] overflow-hidden flex flex-col p-6 w-full">
-      <div className="z-10 flex flex-col md:flex-row w-full h-full gap-6">
+    <div className="flex-1 relative min-h-screen flex flex-col p-6 w-full">
+      <div className="w-full max-w-[1200px] flex-1 mx-auto flex flex-col xl:flex-row gap-6">
         
         {/* Left Column: Primary Timer */}
-        <div className="flex-1 flex flex-col items-center justify-center bg-surface-container-lowest/80 backdrop-blur-sm border border-outline-variant rounded-3xl p-8 relative overflow-hidden shadow-2xl">
+        <div className="flex-1 flex flex-col items-center justify-center bg-surface-container-lowest/80 backdrop-blur-sm border border-outline-variant rounded-3xl p-8 relative shadow-2xl">
           
           <div className="absolute top-8 left-8 flex items-center gap-3 bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant shadow-lg z-20">
             <span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>eco</span>
@@ -327,30 +327,10 @@ export default function Focus() {
             </button>
           </div>
 
-          {/* Dynamic Focus Insight Banner */}
-          <div className="mt-12 w-full max-w-2xl relative overflow-hidden rounded-3xl p-[1px]">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/30 to-primary/30 animate-[gradientFlow_5s_ease_infinite] bg-[length:200%_200%] opacity-50 blur-sm"></div>
-            <div className="relative h-full w-full bg-[#11131a]/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6 border border-white/5 shadow-2xl">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden group">
-                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <span className="material-symbols-outlined text-[32px] text-on-primary">psychology</span>
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                  <h4 className="text-label-sm font-label-sm text-primary uppercase tracking-widest">In The Zone</h4>
-                </div>
-                <h3 className="text-title-lg font-title-lg text-on-surface mb-2 font-display">Deep Work State</h3>
-                <p className="text-body-sm text-on-surface-variant leading-relaxed">
-                  You are building the neural pathways for mastery. Remove all distractions, focus entirely on the present moment, and let your flow state take over.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Column: Live Stats Panels */}
-        <div className="w-full md:w-[400px] flex flex-col gap-6">
+        <div className="w-full xl:w-[400px] flex flex-col gap-6">
           <div className="glass-panel rounded-2xl p-6 flex flex-col shadow-lg border border-white/10">
             <h3 className="text-label-md font-label-md text-on-surface-variant mb-6 uppercase tracking-wider">Session Progress</h3>
             

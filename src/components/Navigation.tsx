@@ -10,7 +10,7 @@ export default function Navigation() {
   return (
     <>
       {/* SideNavBar (Desktop) */}
-      <nav className="hidden md:flex flex-col h-screen fixed left-0 top-0 p-md glass-panel border-r border-white/10 w-64 z-40 transition-all duration-200 ease-in-out">
+      <nav className="hidden md:flex flex-col h-screen fixed left-0 top-0 p-md glass-panel border-r border-white/10 w-56 z-40 transition-all duration-200 ease-in-out">
         <div className="flex items-center gap-sm mb-lg">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#ff8a65] flex items-center justify-center shadow-md">
             <span className="material-symbols-outlined text-white text-[24px]">rocket_launch</span>

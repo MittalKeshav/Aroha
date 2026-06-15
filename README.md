@@ -4,13 +4,13 @@ Aroha is a modern, beautifully designed productivity application built to help y
 
 ## Features
 
-- **Today's Goals:** Organize your daily tasks, set start times, end times, and deadlines.
-- **Deep Work Sessions:** Built-in Pomodoro timer and Stopwatch to track your focus sessions.
+- **Today's Goals:** Organize your daily tasks, set start times, end times, and deadlines. All tasks are visible with native scrolling.
+- **Streamlined Focus Sessions:** A distraction-free, perfectly scaled Pomodoro timer and Stopwatch to track your deep work sessions.
 - **Progress Sync:** Aroha automatically saves your timer progress every second. If you close the app accidentally, your timer will still be there.
 - **Backlog Management:** Easily catch up on overdue tasks from previous days with dedicated "Needs Attention" and "Earlier This Week" sections.
-- **Calendar View:** Visualize your productivity history. Review completed tasks and focus sessions on any given day.
-- **Premium Fluid UI:** A visually stunning, dynamic mesh gradient interface that makes productivity feel like a high-end experience.
-- **Desktop Notifications:** (Coming Soon) Get native popup alerts when your break is over or a task deadline is approaching.
+- **Calendar View:** Visualize your productivity history. Review completed tasks, upcoming deadlines, and weekly insights on any given day.
+- **Responsive Fluid UI:** A visually stunning, dynamic mesh gradient interface that natively scales to any laptop screen size with smooth, unrestricted scrolling.
+- **Desktop Notifications:** Get native popup alerts when your break is over or a task deadline is approaching, configurable in the Settings.
 
 ## Tech Stack
 
@@ -46,8 +46,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 - [ ] Firebase Authentication (Google Login, Email/Password)
 - [ ] Cloud Database Syncing (Firestore)
-- [ ] Vercel Deployment
-- [ ] Advanced Desktop Notifications
+- [x] Vercel Deployment
+- [x] Advanced Desktop Notifications
 
 ## License
 

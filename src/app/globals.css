@@ -5,6 +5,9 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+}
+
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -48,13 +51,13 @@
   .global-bg {
     background-color: #0b0c10;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
   }
 
   .global-bg::before,
   .global-bg::after {
     content: "";
-    position: absolute;
+    position: fixed;
     inset: -50%;
     pointer-events: none;
     z-index: 0;
