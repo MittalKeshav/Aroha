@@ -274,9 +274,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
           // 30 seconds left notification
           if (state.targetSeconds - totalElapsed <= 30 && state.targetSeconds - totalElapsed > 0 && !state.notified30Sec) {
             if (settings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-              new Notification('ZenStudy', {
+              new Notification('Aroha', {
                 body: 'Only 30 seconds left in your focus session! Finish up your thought.',
-                icon: '/favicon.ico'
+                icon: '/rocket.svg'
               });
             }
             setActiveTimer(prev => ({ ...prev, notified30Sec: true }));
@@ -285,9 +285,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
           if (totalElapsed >= state.targetSeconds) {
             // Trigger Desktop Notification if enabled!
             if (settings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-              new Notification('ZenStudy', {
+              new Notification('Aroha', {
                 body: 'Your focus session is complete! Great job. Time for a break.',
-                icon: '/favicon.ico'
+                icon: '/rocket.svg'
               });
             }
             
@@ -303,9 +303,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         // 30 seconds left for break notification
         if (breakTarget - totalBreakElapsed <= 30 && breakTarget - totalBreakElapsed > 0 && !state.notified30Sec) {
           if (settings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-            new Notification('ZenStudy', {
+            new Notification('Aroha', {
               body: 'Only 30 seconds left in your break! Get ready to focus.',
-              icon: '/favicon.ico'
+              icon: '/rocket.svg'
             });
           }
           setActiveTimer(prev => ({ ...prev, notified30Sec: true }));
@@ -313,9 +313,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
         if (totalBreakElapsed >= breakTarget) {
            if (settings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-             new Notification('ZenStudy', {
+             new Notification('Aroha', {
                body: 'Your break is over! Time to get back to work.',
-               icon: '/favicon.ico'
+               icon: '/rocket.svg'
              });
            }
            // Stop the break
@@ -379,9 +379,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
           }
 
           if (notifyMsg && appSettings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-            new Notification('ZenStudy Deadline', {
+            new Notification('Aroha Deadline', {
               body: notifyMsg,
-              icon: '/favicon.ico'
+              icon: '/rocket.svg'
             });
           }
 
