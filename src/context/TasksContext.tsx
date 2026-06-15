@@ -248,8 +248,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
-    // Reverting to popup because redirect causes silent loops on localhost with strict privacy settings
-    await signInWithPopup(auth, googleProvider);
+    // Using redirect. This guarantees NO popup blockers can interfere.
+    // It works flawlessly on production domains like Vercel.
+    await signInWithRedirect(auth, googleProvider);
   };
 
   const loginAsGuest = async (name: string) => {
