@@ -238,7 +238,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
-    await setPersistence(auth, browserLocalPersistence);
+    // DO NOT await anything before signInWithPopup.
+    // If you await, the browser loses the original "click" context and blocks it as a rogue popup!
+    setPersistence(auth, browserLocalPersistence);
     await signInWithPopup(auth, googleProvider);
   };
 
