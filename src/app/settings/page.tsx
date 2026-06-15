@@ -122,7 +122,7 @@ export default function Settings() {
               </div>
 
               {/* Notifications Setting */}
-              <div className="bg-surface-container-low rounded-xl p-md border border-outline-variant">
+              <div className="glass-panel rounded-xl p-md border border-white/10">
                 <div className="flex items-center gap-sm mb-sm">
                   <span className="material-symbols-outlined text-secondary">notifications_active</span>
                   <h4 className="text-body-md font-body-md font-semibold text-on-surface">Desktop Notifications</h4>
@@ -153,7 +153,7 @@ export default function Settings() {
           {/* Help & Support Panel */}
           <section className="flex flex-col gap-md">
             <h3 className="text-headline-md font-headline-md text-on-surface border-b border-outline-variant pb-xs">Help & Support</h3>
-            <div className="bg-surface-container-low rounded-xl border border-outline-variant overflow-hidden">
+            <div className="glass-panel rounded-xl border border-white/10 overflow-hidden">
               <button 
                 onClick={() => setShowGuide(!showGuide)}
                 className="w-full p-md flex items-center justify-between text-left hover:bg-surface-container-high transition-colors border-b border-outline-variant"
@@ -162,14 +162,14 @@ export default function Settings() {
                   <span className="material-symbols-outlined text-primary">book</span>
                   <div>
                     <h4 className="text-body-md font-body-md font-semibold text-on-surface">User Guide (How to use)</h4>
-                    <p className="text-label-sm font-label-sm text-on-surface-variant">Learn the ZenStudy workflow.</p>
+                    <p className="text-label-sm font-label-sm text-on-surface-variant">Learn the Aroha workflow.</p>
                   </div>
                 </div>
                 <span className={`material-symbols-outlined text-outline transition-transform ${showGuide ? 'rotate-180' : ''}`}>expand_more</span>
               </button>
               
               {showGuide && (
-                <div className="p-md bg-surface-container text-body-md text-on-surface-variant border-b border-outline-variant flex flex-col gap-4">
+                <div className="p-md glass-sub-panel text-body-md text-on-surface-variant border-b border-white/10 flex flex-col gap-4">
                   <div>
                     <h5 className="font-semibold text-on-surface mb-1">1. Add & Manage Tasks</h5>
                     <p>Go to the <strong>Today</strong> tab. Here you can add tasks you want to accomplish today. You can optionally specify a start time, end time, and deadline to better organize your schedule. Check off tasks as you finish them!</p>
@@ -177,7 +177,7 @@ export default function Settings() {
                   
                   <div>
                     <h5 className="font-semibold text-on-surface mb-1">2. Deep Work Sessions</h5>
-                    <p>Head over to the <strong>Focus</strong> tab. Select a task you're working on, and hit the Play button to start your Pomodoro timer or Stopwatch. When the timer is active, ZenStudy will continually save your progress every second, so you'll never lose your focus time even if you accidentally close the website.</p>
+                    <p>Head over to the <strong>Focus</strong> tab. Select a task you're working on, and hit the Play button to start your Pomodoro timer or Stopwatch. When the timer is active, Aroha will continually save your progress every second, so you'll never lose your focus time even if you accidentally close the website.</p>
                   </div>
 
                   <div>
@@ -197,8 +197,8 @@ export default function Settings() {
                 </div>
               )}
               
-              <div className="p-md bg-surface-container-highest flex items-center justify-between">
-                <span className="text-label-sm font-label-sm text-on-surface-variant">ZenStudy App Version 2.5 (Local Auth)</span>
+              <div className="p-md glass-sub-panel flex items-center justify-between">
+                <span className="text-label-sm font-label-sm text-on-surface-variant">Aroha App Version 2.5 (Local Auth)</span>
               </div>
             </div>
           </section>

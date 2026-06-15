@@ -56,47 +56,6 @@ export default function Focus() {
     return () => clearInterval(interval);
   }, [activeTimer, viewMode, editHours, editMinutes]);
 
-  // Ambient Audio state
-  const [activeSound, setActiveSound] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const sounds = [
-    { id: 'rain', label: 'Rain Focus', icon: 'water_drop', url: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3' },
-    { id: 'forest', label: 'Forest Relax', icon: 'forest', url: 'https://cdn.pixabay.com/download/audio/2022/02/07/audio_d0c6ff1cb8.mp3' },
-    { id: 'space', label: 'Deep Space', icon: 'dark_mode', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3' },
-    { id: 'waves', label: 'Ocean Waves', icon: 'waves', url: 'https://cdn.pixabay.com/download/audio/2021/08/09/audio_9e3d81b853.mp3' },
-    { id: 'fire', label: 'Cozy Fire', icon: 'local_fire_department', url: 'https://cdn.pixabay.com/download/audio/2022/02/22/audio_d1718ab41b.mp3' },
-  ];
-
-  const handleSoundToggle = (soundId: string, url: string) => {
-    if (activeSound === soundId) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-      setActiveSound(null);
-    } else {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-      audioRef.current = new Audio(url);
-      audioRef.current.loop = true;
-      audioRef.current.play().catch((e: any) => {
-        if (e.name !== 'AbortError') {
-          console.error("Audio play failed:", e);
-        }
-      });
-      setActiveSound(soundId);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    };
-  }, []);
-
   const togglePlay = () => {
     if (activeTimer.isPlaying) {
       if (activeTimer.mode === viewMode) {
@@ -253,12 +212,6 @@ export default function Focus() {
 
   return (
     <div className="flex-grow relative h-[calc(100vh-theme(spacing.md)*2)] overflow-hidden flex flex-col p-6 w-full">
-      <div 
-        className="absolute inset-0 pointer-events-none z-0 opacity-10 bg-cover bg-center" 
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&q=80&w=1920&ixlib=rb-4.0.3)' }}
-      ></div>
-      <div className="absolute inset-0 pointer-events-none z-0" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(55, 98, 130, 0.15) 0%, rgba(19, 19, 20, 1) 70%)' }}></div>
-      
       <div className="z-10 flex flex-col md:flex-row w-full h-full gap-6">
         
         {/* Left Column: Primary Timer */}
@@ -356,7 +309,7 @@ export default function Focus() {
 
           {/* Controls */}
           <div className="flex items-center gap-8 z-20 mt-6">
-            <button title="Reset Timer" onClick={resetTimer} className="w-20 h-20 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 shadow-md">
+            <button title="Reset Timer" onClick={resetTimer} className="w-20 h-20 rounded-full glass-sub-panel flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors active:scale-95 shadow-md">
               <span className="material-symbols-outlined text-[36px]">replay</span>
             </button>
             <button 
@@ -369,38 +322,36 @@ export default function Focus() {
                 {isViewActive ? 'pause' : 'play_arrow'}
               </span>
             </button>
-            <button title="Skip Session" className="w-20 h-20 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 shadow-md opacity-50 cursor-not-allowed">
+            <button title="Skip Session" className="w-20 h-20 rounded-full glass-sub-panel flex items-center justify-center text-on-surface hover:bg-white/10 transition-colors active:scale-95 shadow-md opacity-50 cursor-not-allowed">
               <span className="material-symbols-outlined text-[36px]">skip_next</span>
             </button>
           </div>
 
-          {/* Ambient Sounds */}
-          <div className="mt-12 w-full max-w-2xl">
-            <h4 className="text-label-sm font-label-sm text-outline uppercase tracking-widest mb-4 text-center">Focus Sounds</h4>
-            <div className="flex justify-center gap-4 flex-wrap">
-              {sounds.map(sound => (
-                <button 
-                  key={sound.id}
-                  title={`Play ${sound.label}`}
-                  onClick={() => handleSoundToggle(sound.id, sound.url)}
-                  className={`flex-1 min-w-[100px] bg-surface-container-low border border-outline-variant p-4 rounded-2xl flex flex-col items-center gap-2 hover:bg-surface-container-high transition-all active:scale-95 ${activeSound === sound.id ? 'border-primary shadow-[0_0_20px_rgba(161,203,239,0.15)]' : ''}`}
-                >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${activeSound === sound.id ? 'bg-primary-container text-primary' : 'bg-surface-container-highest text-on-surface-variant'}`}>
-                    <span className="material-symbols-outlined text-[24px]">{sound.icon}</span>
-                  </div>
-                  <span className={`text-[12px] font-label-md mt-1 ${activeSound === sound.id ? 'text-primary' : 'text-on-surface-variant'}`}>{sound.label}</span>
-                  <span className={`material-symbols-outlined text-[20px] mt-1 ${activeSound === sound.id ? 'text-primary' : 'text-outline'}`}>
-                    {activeSound === sound.id ? 'pause_circle' : 'play_circle'}
-                  </span>
-                </button>
-              ))}
+          {/* Dynamic Focus Insight Banner */}
+          <div className="mt-12 w-full max-w-2xl relative overflow-hidden rounded-3xl p-[1px]">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/30 to-primary/30 animate-[gradientFlow_5s_ease_infinite] bg-[length:200%_200%] opacity-50 blur-sm"></div>
+            <div className="relative h-full w-full bg-[#11131a]/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6 border border-white/5 shadow-2xl">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden group">
+                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <span className="material-symbols-outlined text-[32px] text-on-primary">psychology</span>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                  <h4 className="text-label-sm font-label-sm text-primary uppercase tracking-widest">In The Zone</h4>
+                </div>
+                <h3 className="text-title-lg font-title-lg text-on-surface mb-2 font-display">Deep Work State</h3>
+                <p className="text-body-sm text-on-surface-variant leading-relaxed">
+                  You are building the neural pathways for mastery. Remove all distractions, focus entirely on the present moment, and let your flow state take over.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Right Column: Live Stats Panels */}
         <div className="w-full md:w-[400px] flex flex-col gap-6">
-          <div className="bg-surface-container-low border border-outline-variant rounded-2xl p-6 flex flex-col shadow-lg">
+          <div className="glass-panel rounded-2xl p-6 flex flex-col shadow-lg border border-white/10">
             <h3 className="text-label-md font-label-md text-on-surface-variant mb-6 uppercase tracking-wider">Session Progress</h3>
             
             <div className="flex items-end gap-3 h-32 mb-3 w-full overflow-hidden">
@@ -420,7 +371,7 @@ export default function Focus() {
             </div>
           </div>
 
-          <div className="bg-surface-container-low border border-outline-variant rounded-2xl p-6 flex flex-col shadow-lg max-h-[300px]">
+          <div className="glass-panel rounded-2xl p-6 flex flex-col shadow-lg border border-white/10 max-h-[300px]">
             <h3 className="text-label-md font-label-md text-on-surface-variant mb-4 uppercase tracking-wider">Today's Focus Flow</h3>
             <div className="flex flex-col flex-grow">
               {flowHours.length === 0 ? (

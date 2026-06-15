@@ -27,17 +27,13 @@ export default function Backlog() {
   const hasTasks = backlogTasks.length > 0;
 
   return (
-    <div className="min-h-[calc(100vh-theme(spacing.md)*2)] w-full flex flex-col relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900 via-[#0a0514] to-black rounded-3xl">
-      {/* Background glowing orbs for extra depth */}
-      <div className="absolute top-40 left-20 w-96 h-96 bg-primary/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-40 right-20 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      
+    <div className="w-full flex flex-col relative overflow-hidden">
       <div className="flex-1 w-full pt-12 px-4 md:px-8 pb-32 max-w-7xl mx-auto flex flex-col gap-8 relative z-10">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 glass-panel p-8 rounded-[2rem]">
           <div>
-            <h1 className="text-[40px] md:text-[56px] font-display text-white mb-2 tracking-tight drop-shadow-lg">Backlog</h1>
+            <h1 className="text-headline-lg font-headline-lg text-white mb-2 tracking-tight drop-shadow-lg">Backlog</h1>
             <p className="text-body-lg font-body-lg text-white/70">Let's clear those hurdles! These tasks are waiting for you.</p>
           </div>
           <div className="flex gap-4 items-center">
@@ -64,7 +60,7 @@ export default function Backlog() {
                 <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-4 text-[#b0ceae] shadow-[0_0_20px_rgba(176,206,174,0.3)]">
                   <span className="material-symbols-outlined text-[32px]">celebration</span>
                 </div>
-                <h2 className="text-[32px] font-display text-white mb-2 tracking-wide drop-shadow-md">No Backlogs</h2>
+                <h2 className="text-headline-md font-headline-md text-white mb-2 tracking-wide drop-shadow-md">No Backlogs</h2>
                 <p className="text-body-lg text-white/80">You're all caught up! Enjoy this peaceful moment.</p>
               </div>
             </div>
@@ -154,7 +150,7 @@ export default function Backlog() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent pointer-events-none"></div>
                 <span className="material-symbols-outlined absolute -right-8 -bottom-8 text-[160px] text-primary/10 group-hover:scale-110 group-hover:text-primary/20 transition-all duration-700 blur-[2px]">psychology</span>
                 <div className="relative z-10">
-                  <h3 className="text-[48px] font-display mb-2 drop-shadow-md">{backlogTasks.length} Tasks</h3>
+                  <h3 className="text-headline-lg font-headline-lg mb-2 drop-shadow-md">{backlogTasks.length} Tasks</h3>
                   <p className="text-body-lg font-body-lg text-white/80 max-w-xs">Waiting for your attention. You've got this.</p>
                 </div>
               </div>

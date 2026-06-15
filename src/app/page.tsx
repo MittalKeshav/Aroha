@@ -138,14 +138,14 @@ export default function Home() {
 
           <div className="flex flex-col gap-sm">
             {todayTasks.length === 0 ? (
-              <div className="bg-surface-container-low border border-outline-variant border-dashed rounded-2xl p-xl flex flex-col items-center justify-center text-center opacity-70 mt-md">
+              <div className="glass-sub-panel border-dashed rounded-2xl p-xl flex flex-col items-center justify-center text-center opacity-70 mt-md">
                 <span className="material-symbols-outlined text-[64px] text-outline mb-4">event_available</span>
                 <p className="text-headline-sm text-on-surface mb-2">No goals for today</p>
                 <p className="text-body-md text-on-surface-variant">Use the panel on the right to add some tasks!</p>
               </div>
             ) : (
               todayTasks.slice(0, 4).map(task => (
-                <div key={task.id} className="group relative bg-surface-container-low border border-outline-variant rounded-2xl p-md transition-all hover:border-primary hover:shadow-ambient-l1">
+                <div key={task.id} className="group relative glass-sub-panel rounded-2xl p-md transition-all hover:border-primary hover:shadow-[0_0_15px_rgba(255,165,0,0.2)]">
                   <div className="flex items-start gap-md">
                     <div className="pt-1 relative">
                       <input 
@@ -232,7 +232,7 @@ export default function Home() {
               value={additionalNotes}
               onChange={handleNotesChange}
               placeholder="e.g., Today's goals are very important..."
-              className="w-full bg-surface-container-low border border-outline-variant rounded-xl p-md text-body-md text-on-surface focus:outline-none focus:border-primary min-h-[120px] resize-y transition-colors"
+              className="w-full glass-sub-panel rounded-xl p-md text-body-md text-on-surface focus:outline-none focus:border-primary min-h-[120px] resize-y transition-colors"
             />
           </div>
         </section>
@@ -241,7 +241,7 @@ export default function Home() {
         <section className="lg:col-span-4 space-y-gutter">
           
           {/* Progress Card */}
-          <div className="bg-surface rounded-2xl p-md shadow-ambient-l1 border border-outline-variant flex flex-col items-center justify-center">
+          <div className="glass-panel rounded-2xl p-md flex flex-col items-center justify-center">
             <h4 className="text-label-md font-label-md text-on-surface-variant uppercase tracking-wide w-full text-left mb-6">Daily Momentum</h4>
             <div className="relative w-32 h-32 mb-4">
               <svg className="w-full h-full transform -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
@@ -261,7 +261,7 @@ export default function Home() {
           </div>
 
           {/* Add Task Form Card (Replaces Estimated Time Card) */}
-          <div className="bg-surface-container-low rounded-2xl p-lg shadow-ambient-l1 border border-outline-variant">
+          <div className="glass-panel rounded-2xl p-md">
             <div className="flex items-center gap-3 mb-6">
               <span className="material-symbols-outlined text-primary text-[28px]">add_task</span>
               <h4 className="text-headline-md font-headline-md text-on-surface">Plan New Task</h4>

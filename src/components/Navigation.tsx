@@ -10,7 +10,7 @@ export default function Navigation() {
   return (
     <>
       {/* SideNavBar (Desktop) */}
-      <nav className="hidden md:flex flex-col h-screen fixed left-0 top-0 p-md bg-surface-container-low border-r border-outline-variant w-64 z-40 transition-all duration-200 ease-in-out">
+      <nav className="hidden md:flex flex-col h-screen fixed left-0 top-0 p-md glass-panel border-r border-white/10 w-64 z-40 transition-all duration-200 ease-in-out">
         <div className="flex items-center gap-sm mb-lg">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#ff8a65] flex items-center justify-center shadow-md">
             <span className="material-symbols-outlined text-white text-[24px]">rocket_launch</span>
@@ -51,7 +51,7 @@ export default function Navigation() {
       </nav>
 
       {/* TopAppBar (Mobile) */}
-      <header className="md:hidden flex justify-between items-center w-full px-margin-mobile py-md bg-surface-container-low border-b border-outline-variant fixed top-0 left-0 z-40 transition-all duration-200 ease-in-out">
+      <header className="md:hidden flex justify-between items-center w-full px-margin-mobile py-md glass-panel border-b border-white/10 fixed top-0 left-0 z-40 transition-all duration-200 ease-in-out">
         <h1 className="text-headline-md font-headline-md text-primary flex items-center gap-2">
           <span className="material-symbols-outlined text-[20px]">rocket_launch</span>
           Aroha
@@ -64,7 +64,7 @@ export default function Navigation() {
       </header>
 
       {/* BottomNavBar (Mobile) */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm pb-safe pt-xs bg-surface shadow-[0_-4px_20px_0_rgba(53,96,127,0.15)] rounded-t-xl transition-all duration-200 ease-in-out">
+      <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm pb-safe pt-xs glass-panel shadow-[0_-4px_20px_0_rgba(53,96,127,0.15)] rounded-t-xl transition-all duration-200 ease-in-out">
         <Link href="/" className={`flex flex-col items-center justify-center ${pathname === '/' ? 'bg-secondary-container text-on-secondary-container' : 'text-outline hover:bg-surface-container-high'} rounded-full px-4 py-1 transition-all scale-95 active:scale-90`}>
           <span className={`material-symbols-outlined ${pathname === '/' ? 'filled' : ''}`}>today</span>
           <span className="text-label-sm font-label-sm mt-1">Today</span>

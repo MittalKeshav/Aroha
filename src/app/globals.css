@@ -44,6 +44,50 @@
   .material-symbols-outlined.filled {
     font-variation-settings: 'FILL' 1;
   }
+  
+  .global-bg {
+    background-color: #0b0c10;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .global-bg::before,
+  .global-bg::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .global-bg::before {
+    background: 
+      radial-gradient(circle at 50% 50%, rgba(119, 64, 255, 0.15), transparent 60%),
+      radial-gradient(circle at 80% 20%, rgba(45, 122, 241, 0.12), transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(255, 64, 129, 0.1), transparent 50%);
+    animation: meshFlow 25s ease-in-out infinite alternate;
+  }
+
+  .global-bg::after {
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1), transparent 60%),
+      radial-gradient(circle at 80% 80%, rgba(162, 59, 255, 0.12), transparent 50%);
+    animation: meshFlowReverse 30s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes meshFlow {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(5%, 5%) scale(1.05) rotate(5deg); }
+  66% { transform: translate(-5%, 10%) scale(0.95) rotate(-5deg); }
+  100% { transform: translate(-10%, -5%) scale(1.1) rotate(10deg); }
+}
+
+@keyframes meshFlowReverse {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(-5%, -10%) scale(1.1) rotate(-5deg); }
+  66% { transform: translate(10%, -5%) scale(0.9) rotate(5deg); }
+  100% { transform: translate(5%, 10%) scale(1.05) rotate(-10deg); }
 }
 
 /* Custom scrollbar for settings */
