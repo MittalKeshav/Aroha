@@ -1,0 +1,274 @@
+.pageWrapper {
+  background: radial-gradient(ellipse at top, #312e81, #0a0514, #000);
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: -24px;
+  padding: 24px;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.glowOrb1 {
+  position: absolute;
+  top: 10rem;
+  left: 5rem;
+  width: 24rem;
+  height: 24rem;
+  background-color: rgba(53, 96, 127, 0.2);
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glowOrb2 {
+  position: absolute;
+  bottom: 10rem;
+  right: 5rem;
+  width: 500px;
+  height: 500px;
+  background-color: rgba(147, 51, 234, 0.1);
+  border-radius: 50%;
+  filter: blur(150px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.glassPanel {
+  background: rgba(25, 25, 35, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 2rem;
+  padding: 32px;
+}
+
+.glassSubPanel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 56px;
+  margin-bottom: 8px;
+  text-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+  color: rgba(255,255,255,0.7);
+  font-size: 18px;
+}
+
+.clearBtn {
+  color: #ffb4ab;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 12px 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clearBtn:hover {
+  background: rgba(255, 180, 171, 0.1);
+  border-color: rgba(255, 180, 171, 0.3);
+}
+
+.section {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.urgentGradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, transparent, var(--error), transparent);
+  opacity: 0.5;
+}
+
+.sectionTitle {
+  font-family: var(--font-headline);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.urgentText {
+  color: #ffb4ab;
+  text-shadow: 0 0 10px rgba(255, 180, 171, 0.5);
+}
+
+.iconCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.urgentIcon {
+  background: rgba(255, 180, 171, 0.1);
+  border: 1px solid rgba(255, 180, 171, 0.2);
+}
+
+.historyIcon {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.taskItem:hover {
+  transform: translateY(-2px) scale(1.01);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.taskCheckbox {
+  appearance: none;
+  display: none;
+}
+
+.checkboxVisual {
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.checkIcon {
+  color: #b0ceae;
+  opacity: 0;
+  transition: opacity 0.2s;
+  text-shadow: 0 0 8px rgba(176,206,174,0.8);
+}
+
+.taskCheckbox:checked + .checkboxVisual {
+  background-color: rgba(176, 206, 174, 0.4);
+  border-color: #b0ceae;
+  box-shadow: 0 0 10px rgba(176, 206, 174, 0.5);
+}
+
+.taskCheckbox:checked + .checkboxVisual .checkIcon {
+  opacity: 1;
+}
+
+.taskContent {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taskTitle {
+  font-family: var(--font-headline);
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.taskMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.subjectChip {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.urgentChip {
+  color: #ffb4ab;
+  background: rgba(255, 180, 171, 0.1);
+  border-color: rgba(255, 180, 171, 0.2);
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.statsCard {
+  background: rgba(53, 96, 127, 0.1);
+  border-color: rgba(53, 96, 127, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.statsNumber {
+  font-family: var(--font-display);
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .headerContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .taskContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+}

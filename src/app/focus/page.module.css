@@ -1,0 +1,318 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  height: 100%;
+}
+
+@media (min-width: 769px) {
+  .container {
+    flex-direction: row;
+  }
+}
+
+.leftColumn {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-ambient-l2);
+}
+
+.rightColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.ambientBackground {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(55, 98, 130, 0.08) 0%, rgba(19, 19, 20, 1) 60%);
+}
+
+.headerPill {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--surface-container-low);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--outline-variant);
+  box-shadow: var(--shadow-ambient-l1);
+  z-index: 20;
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background-color: var(--outline-variant);
+  margin: 0 4px;
+}
+
+.modeToggle {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  background-color: var(--surface-container-low);
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  gap: 4px;
+  border: 1px solid var(--outline-variant);
+  z-index: 20;
+}
+
+.toggleBtn {
+  padding: 8px 24px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggleBtnActive {
+  background-color: var(--surface-bright);
+  color: var(--on-surface);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.timerContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  margin-top: 32px;
+}
+
+.progressRing {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  transform: rotate(-90deg);
+}
+
+.progressBg {
+  stroke: var(--surface-container-highest);
+  stroke-width: 1.5;
+  fill: transparent;
+}
+
+.progressValue {
+  stroke: var(--primary);
+  stroke-width: 2.5;
+  fill: transparent;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.glassPanel {
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  box-shadow: var(--shadow-ambient-l2);
+  background: rgba(42, 42, 42, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(140, 145, 152, 0.1);
+}
+
+.timerLabel {
+  color: var(--primary);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+.timerDisplay {
+  font-size: 100px;
+  line-height: 1;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--on-surface);
+  text-shadow: 0 0 40px rgba(161, 203, 239, 0.3);
+  letter-spacing: -0.05em;
+}
+
+.nextBadge {
+  margin-top: 16px;
+  background-color: var(--surface-container);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  color: var(--outline);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  z-index: 20;
+}
+
+.controlBtn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.controlBtn:hover {
+  background-color: var(--surface-container-highest);
+}
+
+.controlBtn:active {
+  transform: scale(0.95);
+}
+
+.playBtn {
+  width: 96px;
+  height: 96px;
+  background-color: var(--primary);
+  color: var(--on-primary);
+  box-shadow: 0 0 40px rgba(161, 203, 239, 0.4);
+}
+
+.playBtn:hover {
+  background-color: var(--primary-container);
+}
+
+.soundPanel {
+  margin-top: 32px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.soundHeader {
+  text-align: center;
+  color: var(--outline);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+
+.soundButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.soundBtn {
+  flex: 1;
+  background-color: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.soundBtn:hover {
+  background-color: var(--surface-container-high);
+}
+
+.soundIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--surface-container-highest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.soundBtn:hover .soundIcon {
+  color: var(--primary);
+}
+
+.card {
+  background-color: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-ambient-l1);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+/* Add some progress bars */
+.progressList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+.progressItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.progressTime {
+  width: 48px;
+  text-align: right;
+  color: var(--outline);
+}
+
+.progressBarTrack {
+  flex: 1;
+  height: 8px;
+  background-color: var(--surface-container-high);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+
+.bgPrimary {
+  background-color: var(--primary);
+}
+
+.bgSecondary {
+  background-color: var(--secondary);
+}

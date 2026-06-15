@@ -1,0 +1,21 @@
+.mainContent {
+  flex-grow: 1;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+@media (min-width: 769px) {
+  .mainContent {
+    margin-left: 256px; /* width of side nav */
+  }
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    padding-top: 96px; /* account for top nav */
+    padding-bottom: 96px; /* account for bottom nav */
+  }
+}
