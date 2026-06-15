@@ -1,28 +1,42 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
+import { auth, db, googleProvider } from '@/lib/firebase';
+import { 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signInWithPopup, 
+  signInAnonymously, 
+  signOut,
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence
+} from 'firebase/auth';
+import { doc, setDoc, getDocs, collection, deleteDoc, getDoc } from 'firebase/firestore';
 
 export type Task = {
   id: number;
   title: string;
   course?: string;
-  time?: string; // Used as estimated time
+  time?: string;
   startTime?: string;
   endTime?: string;
   deadline?: string;
   completed: boolean;
   tag?: string;
-  dateAdded: string; // ISO string of the date (YYYY-MM-DD)
+  dateAdded: string;
   notified1Day?: boolean;
   notified1Hour?: boolean;
 };
 
 export type FocusSession = {
   id: number;
-  duration: number; // in seconds
+  duration: number;
   mode: 'timer' | 'stopwatch';
-  dateAdded: string; // ISO string (YYYY-MM-DD)
-  timestamp: number; // Date.now() for accurate sorting/time-of-day
+  dateAdded: string;
+  timestamp: number;
 };
 
 export type ActiveTimerData = {
@@ -38,13 +52,15 @@ export type ActiveTimerData = {
 };
 
 export type UserProfile = {
+  uid: string;
   username: string;
   displayName: string;
+  isGuest?: boolean;
 };
 
 export type AppSettings = {
-  defaultFocusTime: number; // in seconds
-  defaultBreakTime: number; // in seconds
+  defaultFocusTime: number;
+  defaultBreakTime: number;
   notificationsEnabled: boolean;
 };
 
@@ -67,8 +83,10 @@ type TasksContextType = {
   resetTimer: () => void;
   updateTimerSettings: (mode: 'timer'|'stopwatch', targetSeconds: number) => void;
   toggleBreak: () => void;
-  loginUser: (profile: UserProfile, rememberMe: boolean) => void;
-  logoutUser: () => void;
+  loginIndependent: (email: string, pass: string, name?: string, isSignUp?: boolean) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  loginAsGuest: (name: string) => Promise<void>;
+  logoutUser: () => Promise<void>;
   updateSettings: (settings: Partial<AppSettings>) => void;
   clearAllData: () => void;
 };
@@ -98,142 +116,205 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from local storage
+  // Auth Listener
   useEffect(() => {
-    let loadedTasks: Task[] = [];
-    let loadedSessions: FocusSession[] = [];
-    let loadedProfile: UserProfile | null = null;
-    let loadedSettings: AppSettings | null = null;
-    
-    const savedTasks = localStorage.getItem('zenstudy_tasks');
-    const savedSessions = localStorage.getItem('zenstudy_sessions');
-    const savedProfile = sessionStorage.getItem('zenstudy_profile') || localStorage.getItem('zenstudy_profile');
-    const savedSettingsStr = localStorage.getItem('zenstudy_settings');
-    
-    if (savedTasks) {
-      try { loadedTasks = JSON.parse(savedTasks); } catch (e) { console.error(e); }
-    }
-    if (savedSessions) {
-      try { loadedSessions = JSON.parse(savedSessions); } catch (e) { console.error(e); }
-    }
-    if (savedProfile) {
-      try { loadedProfile = JSON.parse(savedProfile); } catch (e) { console.error(e); }
-    }
-    if (savedSettingsStr) {
-      try { loadedSettings = JSON.parse(savedSettingsStr); } catch (e) { console.error(e); }
-    }
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Fetch User Data from Firestore
+        const uid = user.uid;
+        
+        let profileName = user.displayName;
+        const pendingName = window.sessionStorage.getItem('pendingDisplayName');
+        if (!profileName && pendingName) {
+           profileName = pendingName;
+        }
+        if (!profileName) profileName = 'User';
+        
+        window.sessionStorage.removeItem('pendingDisplayName');
 
-    // Recover any abruptly interrupted active session
-    const backupStr = localStorage.getItem('zenstudy_backup_session');
-    if (backupStr) {
-      try {
-         const backup = JSON.parse(backupStr);
-         if (backup.duration > 0) { // Recover ALL time to prevent any perceived data loss
-            const now = new Date(backup.timestamp);
-            const z = (n: number) => ('0' + n).slice(-2);
-            const dateAdded = `${now.getFullYear()}-${z(now.getMonth() + 1)}-${z(now.getDate())}`;
-            
-            loadedSessions.push({
-               id: backup.timestamp,
-               duration: backup.duration,
-               mode: backup.mode,
-               dateAdded,
-               timestamp: backup.timestamp
-            });
-            
-            // CRITICAL FIX: Save immediately before strict mode re-runs and deletes the backup!
-            localStorage.setItem('zenstudy_sessions', JSON.stringify(loadedSessions));
-         }
-      } catch (e) { console.error(e); }
-      localStorage.removeItem('zenstudy_backup_session'); // Clean up backup after recovering
-    }
+        let isGuest = user.isAnonymous;
+        
+        // INSTANTLY unlock the UI. Do not wait for Firestore to respond.
+        setUserProfile({ uid, username: user.email || 'Guest', displayName: profileName, isGuest });
+        setIsLoaded(true);
 
-    setTasks(loadedTasks);
-    setFocusSessions(loadedSessions);
-    setUserProfile(loadedProfile);
-    if (loadedSettings) setAppSettings(loadedSettings);
-    
-    // Set active timer target if it's the default 25 min and we loaded a different default
-    if (loadedSettings && loadedSettings.defaultFocusTime !== 25 * 60) {
-      setActiveTimer(prev => ({ ...prev, targetSeconds: loadedSettings!.defaultFocusTime }));
-    }
-    
-    setIsLoaded(true);
-  }, []);
+        try {
+          // Load Settings
+          const settingsSnap = await getDoc(doc(db, `users/${uid}`));
+          if (settingsSnap.exists()) {
+            const data = settingsSnap.data();
+            if (data.displayName) {
+               profileName = data.displayName;
+               // Update the profile silently in the background if it differs
+               setUserProfile(prev => prev ? { ...prev, displayName: profileName } : null);
+            }
+            if (data.settings) setAppSettings(data.settings);
+          } else {
+            // Initialize user doc
+            await setDoc(doc(db, `users/${uid}`), {
+              displayName: profileName,
+              isGuest,
+              email: user.email,
+              settings: appSettings
+            }, { merge: true });
+          }
+        } catch (err) {
+          console.error("Firestore settings error:", err);
+        }
 
-  // Save to local storage
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('zenstudy_tasks', JSON.stringify(tasks));
-      localStorage.setItem('zenstudy_sessions', JSON.stringify(focusSessions));
-      localStorage.setItem('zenstudy_settings', JSON.stringify(appSettings));
+        try {
+          // Load Tasks
+          const tasksSnap = await getDocs(collection(db, `users/${uid}/tasks`));
+          const loadedTasks: Task[] = [];
+          tasksSnap.forEach(doc => loadedTasks.push(doc.data() as Task));
+          setTasks(loadedTasks.sort((a,b) => a.id - b.id));
+
+          // Load Sessions
+          const sessSnap = await getDocs(collection(db, `users/${uid}/sessions`));
+          const loadedSessions: FocusSession[] = [];
+          sessSnap.forEach(doc => loadedSessions.push(doc.data() as FocusSession));
+          
+          // Recover backup timer
+          const backupStr = localStorage.getItem('zenstudy_backup_session');
+          if (backupStr) {
+            try {
+              const backup = JSON.parse(backupStr);
+              if (backup.duration > 0) {
+                const now = new Date(backup.timestamp);
+                const z = (n: number) => ('0' + n).slice(-2);
+                const dateAdded = `${now.getFullYear()}-${z(now.getMonth() + 1)}-${z(now.getDate())}`;
+                
+                const recoveredSession: FocusSession = {
+                  id: backup.timestamp,
+                  duration: backup.duration,
+                  mode: backup.mode,
+                  dateAdded,
+                  timestamp: backup.timestamp
+                };
+                loadedSessions.push(recoveredSession);
+                await setDoc(doc(db, `users/${uid}/sessions/${recoveredSession.id}`), recoveredSession);
+              }
+            } catch (e) { console.error(e); }
+            localStorage.removeItem('zenstudy_backup_session');
+          }
+          
+          setFocusSessions(loadedSessions.sort((a,b) => a.timestamp - b.timestamp));
+        } catch (err) {
+          console.error("Firestore data fetch error:", err);
+        }
+        // Update active timer target if needed
+        setAppSettings(prev => {
+           if (prev.defaultFocusTime !== 25 * 60) {
+             setActiveTimer(curr => ({ ...curr, targetSeconds: prev.defaultFocusTime }));
+           }
+           return prev;
+        });
+
+      } else {
+        setUserProfile(null);
+        setTasks([]);
+        setFocusSessions([]);
+      }
+      setIsLoaded(true);
+    });
+
+    return () => unsubscribe();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auth Functions
+  const loginIndependent = async (email: string, pass: string, name?: string, isSignUp?: boolean) => {
+    await setPersistence(auth, browserLocalPersistence);
+    if (isSignUp) {
+      if (name) window.sessionStorage.setItem('pendingDisplayName', name);
+      const res = await createUserWithEmailAndPassword(auth, email, pass);
+      if (name) {
+        await updateProfile(res.user, { displayName: name });
+        await setDoc(doc(db, `users/${res.user.uid}`), { displayName: name, isGuest: false }, { merge: true });
+        setUserProfile(prev => prev ? { ...prev, displayName: name } : null);
+      }
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
     }
-  }, [tasks, focusSessions, appSettings, isLoaded]);
+  };
+
+  const loginWithGoogle = async () => {
+    await setPersistence(auth, browserLocalPersistence);
+    await signInWithPopup(auth, googleProvider);
+  };
+
+  const loginAsGuest = async (name: string) => {
+    window.sessionStorage.setItem('pendingDisplayName', name);
+    await setPersistence(auth, browserSessionPersistence);
+    const res = await signInAnonymously(auth);
+    await updateProfile(res.user, { displayName: name });
+    await setDoc(doc(db, `users/${res.user.uid}`), { displayName: name, isGuest: true }, { merge: true });
+    setUserProfile(prev => prev ? { ...prev, displayName: name } : null);
+  };
+
+  const logoutUser = async () => {
+    await signOut(auth);
+  };
 
   const updateSettings = (newSettings: Partial<AppSettings>) => {
     setAppSettings(prev => {
       const updated = { ...prev, ...newSettings };
-      
-      // Request notification permission if enabling
       if (newSettings.notificationsEnabled && 'Notification' in window) {
-        if (Notification.permission !== 'granted') {
-          Notification.requestPermission();
-        }
+        if (Notification.permission !== 'granted') Notification.requestPermission();
       }
-      
+      // Save to Firestore
+      if (auth.currentUser) {
+        setDoc(doc(db, `users/${auth.currentUser.uid}`), { settings: updated }, { merge: true });
+      }
       return updated;
     });
   };
 
   const clearAllData = () => {
-    if (window.confirm("Are you sure you want to permanently delete all your tasks, session history, and settings?")) {
+    if (window.confirm("Are you sure you want to permanently delete all your data?")) {
       setTasks([]);
       setFocusSessions([]);
-      setUserProfile(null);
-      setAppSettings({
-        defaultFocusTime: 25 * 60,
-        defaultBreakTime: 5 * 60,
-        notificationsEnabled: false
-      });
       localStorage.clear();
       sessionStorage.clear();
+      // Optionally delete from Firestore, but omitting here for safety
     }
   };
 
-  const loginUser = (profile: UserProfile, rememberMe: boolean) => {
-    setUserProfile(profile);
-    if (rememberMe) {
-      localStorage.setItem('zenstudy_profile', JSON.stringify(profile));
-    } else {
-      sessionStorage.setItem('zenstudy_profile', JSON.stringify(profile));
-    }
-  };
-
-  const logoutUser = () => {
-    setUserProfile(null);
-    localStorage.removeItem('zenstudy_profile');
-    sessionStorage.removeItem('zenstudy_profile');
-  };
-
+  // Task Mutators
   const addTask = (taskData: Omit<Task, 'id' | 'completed'>) => {
-    const newTask: Task = {
-      ...taskData,
-      id: Date.now(),
-      completed: false,
-    };
+    const newTask: Task = { ...taskData, id: Date.now(), completed: false };
     setTasks(prev => [...prev, newTask]);
+    if (auth.currentUser) {
+      setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${newTask.id}`), newTask);
+    }
   };
 
   const editTask = (id: number, taskData: Partial<Omit<Task, 'id' | 'completed'>>) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, ...taskData } : t));
+    setTasks(prev => prev.map(t => {
+      if (t.id === id) {
+        const updated = { ...t, ...taskData };
+        if (auth.currentUser) setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), updated);
+        return updated;
+      }
+      return t;
+    }));
   };
 
   const toggleTask = (id: number) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    setTasks(prev => prev.map(t => {
+      if (t.id === id) {
+        const updated = { ...t, completed: !t.completed };
+        if (auth.currentUser) setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), updated);
+        return updated;
+      }
+      return t;
+    }));
   };
 
   const deleteTask = (id: number) => {
     setTasks(prev => prev.filter(t => t.id !== id));
+    if (auth.currentUser) {
+      deleteDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`));
+    }
   };
 
   const clearTasks = () => {
@@ -252,6 +333,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       timestamp: Date.now()
     };
     setFocusSessions(prev => [...prev, newSession]);
+    if (auth.currentUser) {
+      setDoc(doc(db, `users/${auth.currentUser.uid}/sessions/${newSession.id}`), newSession);
+    }
   };
 
   // Timer Logic
@@ -272,27 +356,18 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         totalElapsed += elapsed;
         
         if (state.mode === 'timer') {
-          // 30 seconds left notification
           if (state.targetSeconds - totalElapsed <= 30 && state.targetSeconds - totalElapsed > 0 && !state.notified30Sec) {
             if (settings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-              new Notification('Aroha', {
-                body: 'Only 30 seconds left in your focus session! Finish up your thought.',
-                icon: '/rocket.svg'
-              });
+              new Notification('Aroha', { body: 'Only 30 seconds left in your focus session! Finish up your thought.', icon: '/rocket.svg' });
             }
             setActiveTimer(prev => ({ ...prev, notified30Sec: true }));
           }
 
           if (totalElapsed >= state.targetSeconds) {
-            // Trigger Desktop Notification if enabled!
             if (settings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-              new Notification('Aroha', {
-                body: 'Your focus session is complete! Great job. Time for a break.',
-                icon: '/rocket.svg'
-              });
+              new Notification('Aroha', { body: 'Your focus session is complete! Great job. Time for a break.', icon: '/rocket.svg' });
             }
-            
-            stopTimer(); // Auto-stop when timer finishes
+            stopTimer();
             return;
           }
         }
@@ -301,37 +376,24 @@ export function TasksProvider({ children }: { children: ReactNode }) {
         const totalBreakElapsed = state.breakAccumulatedSeconds + breakElapsed;
         const breakTarget = settings.defaultBreakTime;
 
-        // 30 seconds left for break notification
         if (breakTarget - totalBreakElapsed <= 30 && breakTarget - totalBreakElapsed > 0 && !state.notified30Sec) {
           if (settings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-            new Notification('Aroha', {
-              body: 'Only 30 seconds left in your break! Get ready to focus.',
-              icon: '/rocket.svg'
-            });
+            new Notification('Aroha', { body: 'Only 30 seconds left in your break! Get ready to focus.', icon: '/rocket.svg' });
           }
           setActiveTimer(prev => ({ ...prev, notified30Sec: true }));
         }
 
         if (totalBreakElapsed >= breakTarget) {
            if (settings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-             new Notification('Aroha', {
-               body: 'Your break is over! Time to get back to work.',
-               icon: '/rocket.svg'
-             });
+             new Notification('Aroha', { body: 'Your break is over! Time to get back to work.', icon: '/rocket.svg' });
            }
-           // Stop the break
            setActiveTimer(prev => ({
-             ...prev,
-             isOnBreak: false,
-             breakStartTime: null,
-             startTime: Date.now(), // resume the timer immediately
-             notified30Sec: false
+             ...prev, isOnBreak: false, breakStartTime: null, startTime: Date.now(), notified30Sec: false
            }));
            return;
         }
       }
 
-      // Continuously backup the running session just in case the window closes abruptly!
       if (totalElapsed > 0) {
         localStorage.setItem('zenstudy_backup_session', JSON.stringify({
           duration: totalElapsed,
@@ -341,80 +403,60 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       } else {
         localStorage.removeItem('zenstudy_backup_session');
       }
-
     }, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Deadline notifications loop
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
-      
       setTasks(prevTasks => {
         let hasChanges = false;
         const newTasks = prevTasks.map(task => {
           if (task.completed || !task.deadline) return task;
-          
-          // Compute midnight of the deadline date
           const deadlineDate = new Date(task.deadline);
-          deadlineDate.setHours(0, 0, 0, 0); // Midnight
-          
+          deadlineDate.setHours(0, 0, 0, 0);
           const msRemaining = deadlineDate.getTime() - now.getTime();
           const hoursRemaining = msRemaining / (1000 * 60 * 60);
           
           let updatedTask = { ...task };
           let notifyMsg = '';
 
-          // 1 Day notification (between 23.9 and 24.1 hours to cover interval variations)
           if (hoursRemaining <= 24 && hoursRemaining > 23 && !task.notified1Day) {
             notifyMsg = `Only 1 day left for your task: "${task.title}"!`;
             updatedTask.notified1Day = true;
             hasChanges = true;
-          } 
-          // 1 Hour notification (between 0.9 and 1.1 hours)
-          else if (hoursRemaining <= 1 && hoursRemaining > 0 && !task.notified1Hour) {
+          } else if (hoursRemaining <= 1 && hoursRemaining > 0 && !task.notified1Hour) {
             notifyMsg = `Only 1 hour left for your task: "${task.title}"! Complete it now.`;
             updatedTask.notified1Hour = true;
             hasChanges = true;
           }
 
           if (notifyMsg && appSettings.notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
-            new Notification('Aroha Deadline', {
-              body: notifyMsg,
-              icon: '/rocket.svg'
-            });
+            new Notification('Aroha Deadline', { body: notifyMsg, icon: '/rocket.svg' });
+          }
+
+          if (hasChanges && auth.currentUser) {
+            setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${updatedTask.id}`), updatedTask);
           }
 
           return updatedTask;
         });
-
         return hasChanges ? newTasks : prevTasks;
       });
-    }, 60000); // Check every minute
-    
+    }, 60000);
     return () => clearInterval(interval);
-  }, [appSettings.notificationsEnabled]);
+  }, [appSettings.notificationsEnabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const playTimer = () => {
-    setActiveTimer(prev => ({
-      ...prev,
-      isPlaying: true,
-      startTime: Date.now(),
-      isOnBreak: false,
-    }));
+    setActiveTimer(prev => ({ ...prev, isPlaying: true, startTime: Date.now(), isOnBreak: false }));
   };
 
   const pauseTimer = () => {
     setActiveTimer(prev => {
       if (!prev.isPlaying || prev.isOnBreak) return prev;
       const elapsed = Math.floor((Date.now() - (prev.startTime || Date.now())) / 1000);
-      return {
-        ...prev,
-        isPlaying: false,
-        accumulatedSeconds: prev.accumulatedSeconds + elapsed,
-        startTime: null
-      };
+      return { ...prev, isPlaying: false, accumulatedSeconds: prev.accumulatedSeconds + elapsed, startTime: null };
     });
   };
 
@@ -431,56 +473,29 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       }
 
       return {
-        ...prev,
-        isPlaying: false,
-        startTime: null,
-        accumulatedSeconds: 0,
-        isOnBreak: false,
-        breakStartTime: null,
-        breakAccumulatedSeconds: 0,
+        ...prev, isPlaying: false, startTime: null, accumulatedSeconds: 0,
+        isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0,
       };
     });
   };
 
-  const resetTimer = () => {
-    stopTimer();
-  };
+  const resetTimer = () => stopTimer();
 
   const updateTimerSettings = (mode: 'timer'|'stopwatch', targetSeconds: number) => {
     setActiveTimer(prev => ({
-      ...prev,
-      mode,
-      targetSeconds,
-      accumulatedSeconds: 0,
-      startTime: null,
-      isPlaying: false,
-      isOnBreak: false,
-      breakStartTime: null,
-      breakAccumulatedSeconds: 0
+      ...prev, mode, targetSeconds, accumulatedSeconds: 0, startTime: null, isPlaying: false,
+      isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0
     }));
   };
 
   const toggleBreak = () => {
     setActiveTimer(prev => {
       if (prev.isOnBreak) {
-        return {
-          ...prev,
-          isOnBreak: false,
-          breakStartTime: null,
-          startTime: Date.now() 
-        };
+        return { ...prev, isOnBreak: false, breakStartTime: null, startTime: Date.now() };
       } else {
         let elapsed = 0;
-        if (prev.isPlaying) {
-          elapsed = Math.floor((Date.now() - (prev.startTime || Date.now())) / 1000);
-        }
-        return {
-          ...prev,
-          isOnBreak: true,
-          breakStartTime: Date.now(),
-          accumulatedSeconds: prev.accumulatedSeconds + elapsed,
-          startTime: null
-        };
+        if (prev.isPlaying) elapsed = Math.floor((Date.now() - (prev.startTime || Date.now())) / 1000);
+        return { ...prev, isOnBreak: true, breakStartTime: Date.now(), accumulatedSeconds: prev.accumulatedSeconds + elapsed, startTime: null };
       }
     });
   };
@@ -490,7 +505,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       tasks, focusSessions, activeTimer, userProfile, isLoaded, appSettings,
       addTask, editTask, toggleTask, deleteTask, clearTasks, addFocusSession,
       playTimer, pauseTimer, stopTimer, resetTimer, updateTimerSettings, toggleBreak,
-      updateSettings, clearAllData, loginUser, logoutUser
+      updateSettings, clearAllData, loginIndependent, loginWithGoogle, loginAsGuest, logoutUser
     }}>
       {children}
     </TasksContext.Provider>

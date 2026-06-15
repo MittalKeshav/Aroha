@@ -3,9 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTasks } from '@/context/TasksContext';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const { userProfile } = useTasks();
 
   return (
     <>
@@ -45,7 +47,7 @@ export default function Navigation() {
           </Link>
           <div className="mt-4 flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer">
             <img alt="User avatar" className="w-8 h-8 rounded-full border border-outline-variant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8wmsq3h6GiCRlf0OCY74VVrjn7GCEGPXfcxB9TgSIHurY-5hBzD8Q6o2sisvuur3xGdUfVVt5rEQiHcYqrzoMaedfIlhy5tbHUYqyAbkqjs6_9TyDMyk_E6JanzKLFjQc0AJXJSSJDUup9iX4okIzeMleIVuyEt7F7u7FO8gsmu3ITTbJ53ixdWHjEA3jN_JiEgXhvYjnWUEzIbx34HQT4ku7FiCU-CyyC2hk3HsJ2T-i_tAJNSkUxqb3lwua8qDLiwWD4CTszAIg" />
-            <span className="text-body-lg font-body-lg text-on-surface">Alex M.</span>
+            <span className="text-body-lg font-body-lg text-on-surface">{userProfile?.displayName || 'User'}</span>
           </div>
         </div>
       </nav>

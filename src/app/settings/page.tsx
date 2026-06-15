@@ -42,7 +42,7 @@ export default function Settings() {
               </div>
               <div>
                 <h2 className="text-body-lg font-body-lg font-semibold text-on-surface">
-                  {userProfile?.displayName || 'Alex Mercer'}
+                  {userProfile?.displayName || 'User'}
                 </h2>
                 <p className="text-label-md font-label-md text-on-surface-variant">
                   @{userProfile?.username || 'alex_student'}
@@ -52,7 +52,11 @@ export default function Settings() {
             <nav className="flex flex-col gap-xs relative z-10">
               {userProfile && (
                 <button 
-                  onClick={logoutUser}
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to log out?")) {
+                      logoutUser();
+                    }
+                  }}
                   className="flex items-center justify-between w-full p-sm rounded-lg hover:bg-surface-container-high text-left transition-colors"
                 >
                   <span className="flex items-center gap-sm text-body-md font-body-md text-on-surface">

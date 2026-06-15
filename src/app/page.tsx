@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useTasks } from '@/context/TasksContext';
 
 export default function Home() {
-  const { tasks, addTask, toggleTask, deleteTask, editTask } = useTasks();
+  const { tasks, addTask, toggleTask, deleteTask, editTask, userProfile } = useTasks();
   const [greeting, setGreeting] = useState('Good morning');
   
   // Daily Quote State
@@ -126,7 +126,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-lg w-full flex flex-col justify-end h-full z-10">
           <h2 className="text-display font-display text-white tracking-tight mb-2 drop-shadow-md">
-            {greeting}, Alex
+            {greeting}, {userProfile?.displayName || 'User'}
           </h2>
           <p className="text-body-lg font-body-lg text-white/90 drop-shadow-sm max-w-2xl italic">
             "{quote}"
