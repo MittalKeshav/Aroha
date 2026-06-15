@@ -12,6 +12,10 @@ Aroha is a modern, beautifully designed productivity application built to help y
 - **Responsive Fluid UI:** A visually stunning, dynamic mesh gradient interface that natively scales to any laptop screen size with smooth, unrestricted scrolling.
 - **Desktop Notifications:** Get native popup alerts when your break is over or a task deadline is approaching, configurable in the Settings.
 
+## Live Demo
+
+**Deployed URL:** [https://aroha-alpha.vercel.app](https://aroha-alpha.vercel.app)
+
 ## Tech Stack
 
 - **Framework:** [Next.js](https://nextjs.org/) (React)

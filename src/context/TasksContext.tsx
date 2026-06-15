@@ -232,8 +232,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auth Functions
-  const loginIndependent = async (email: string, pass: string, name?: string, isSignUp?: boolean) => {
-    await setPersistence(auth, browserLocalPersistence);
+  const loginIndependent = async (email: string, pass: string, name?: string, isSignUp?: boolean, remember: boolean = false) => {
+    await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
     if (isSignUp) {
       if (name) window.sessionStorage.setItem('pendingDisplayName', name);
       const res = await createUserWithEmailAndPassword(auth, email, pass);
@@ -262,6 +262,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   };
 
   const logoutUser = async () => {
+    stopTimer();
+    // Give Firestore 500ms to push the final focus session data before killing the auth token
+    await new Promise(r => setTimeout(r, 500));
     await signOut(auth);
   };
 
@@ -293,8 +296,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   const addTask = (taskData: Omit<Task, 'id' | 'completed'>) => {
     const newTask: Task = { ...taskData, id: Date.now(), completed: false };
     setTasks(prev => [...prev, newTask]);
-    if (auth.currentUser) {
-      setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${newTask.id}`), newTask);
+    if (userProfile?.uid) {
+      // Firestore rejects 'undefined' values completely. We must clean the object.
+      const cleanTask = Object.fromEntries(Object.entries(newTask).filter(([_, v]) => v !== undefined));
+      setDoc(doc(db, `users/${userProfile.uid}/tasks/${newTask.id}`), cleanTask)
+        .catch(err => console.error("Firestore Save Error (Task):", err));
     }
   };
 
@@ -302,7 +308,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setTasks(prev => prev.map(t => {
       if (t.id === id) {
         const updated = { ...t, ...taskData };
-        if (auth.currentUser) setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), updated);
+        if (userProfile?.uid) {
+          const cleanUpdated = Object.fromEntries(Object.entries(updated).filter(([_, v]) => v !== undefined));
+          setDoc(doc(db, `users/${userProfile.uid}/tasks/${id}`), cleanUpdated)
+            .catch(err => console.error("Firestore Update Error (Task):", err));
+        }
         return updated;
       }
       return t;
@@ -313,7 +323,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setTasks(prev => prev.map(t => {
       if (t.id === id) {
         const updated = { ...t, completed: !t.completed };
-        if (auth.currentUser) setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), updated);
+        if (userProfile?.uid) {
+          const cleanUpdated = Object.fromEntries(Object.entries(updated).filter(([_, v]) => v !== undefined));
+          setDoc(doc(db, `users/${userProfile.uid}/tasks/${id}`), cleanUpdated)
+            .catch(err => console.error("Firestore Toggle Error (Task):", err));
+        }
         return updated;
       }
       return t;
@@ -322,8 +336,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   const deleteTask = (id: number) => {
     setTasks(prev => prev.filter(t => t.id !== id));
-    if (auth.currentUser) {
-      deleteDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`));
+    if (userProfile?.uid) {
+      deleteDoc(doc(db, `users/${userProfile.uid}/tasks/${id}`))
+        .catch(err => console.error("Firestore Delete Error (Task):", err));
     }
   };
 
@@ -343,8 +358,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       timestamp: Date.now()
     };
     setFocusSessions(prev => [...prev, newSession]);
-    if (auth.currentUser) {
-      setDoc(doc(db, `users/${auth.currentUser.uid}/sessions/${newSession.id}`), newSession);
+    if (userProfile?.uid) {
+      setDoc(doc(db, `users/${userProfile.uid}/sessions/${newSession.id}`), newSession)
+        .catch(err => console.error("Firestore Save Error (Session):", err));
     }
   };
 

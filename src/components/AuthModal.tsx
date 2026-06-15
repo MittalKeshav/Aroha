@@ -42,7 +42,7 @@ export default function AuthModal() {
     setLocalError('');
     setLoading(true);
     try {
-      await loginIndependent(email, password, isSignUp ? displayName : undefined, isSignUp);
+      await loginIndependent(email, password, isSignUp ? displayName : undefined, isSignUp, rememberMe);
     } catch (err: any) {
       console.error(err);
       setLocalError(err.message || 'Authentication failed. Please try again.');
