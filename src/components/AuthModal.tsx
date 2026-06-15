@@ -214,7 +214,7 @@ export default function AuthModal() {
               
               <button 
                 type="button"
-                onClick={() => { setMode('guest'); setError(''); }}
+                onClick={() => { setMode('guest'); setLocalError(''); }}
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2 bg-surface-container/50 hover:bg-surface-container text-white border border-white/10 font-label-md py-3 rounded-xl transition-all active:scale-[0.98] disabled:opacity-50"
               >
