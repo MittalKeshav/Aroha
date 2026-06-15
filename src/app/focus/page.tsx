@@ -6,7 +6,7 @@ import { useTasks } from '@/context/TasksContext';
 export default function Focus() {
   const { 
     focusSessions, activeTimer, 
-    playTimer, pauseTimer, resetTimer, updateTimerSettings, toggleBreak
+    playTimer, pauseTimer, stopTimer, resetTimer, updateTimerSettings, toggleBreak
   } = useTasks();
   
   // Timer editing state
