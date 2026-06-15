@@ -6,7 +6,8 @@ import {
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
-  signInWithPopup, 
+  signInWithRedirect, 
+  getRedirectResult,
   signInAnonymously, 
   signOut,
   updateProfile,
@@ -89,6 +90,7 @@ type TasksContextType = {
   logoutUser: () => Promise<void>;
   updateSettings: (settings: Partial<AppSettings>) => void;
   clearAllData: () => void;
+  authError: string;
 };
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
@@ -115,9 +117,16 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   });
   
   const [isLoaded, setIsLoaded] = useState(false);
+  const [authError, setAuthError] = useState('');
 
   // Auth Listener
   useEffect(() => {
+    // Catch any hidden errors from the Google Redirect
+    getRedirectResult(auth).catch((error) => {
+      console.error("Google Redirect Error:", error);
+      setAuthError(error.message || "Google Sign-In failed due to browser settings.");
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // Fetch User Data from Firestore
@@ -238,9 +247,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   };
 
   const loginWithGoogle = async () => {
-    // DO NOT await anything before signInWithPopup.
-    // If you await, the browser loses the original "click" context and blocks it as a rogue popup!
-    setPersistence(auth, browserLocalPersistence);
+    // Reverting to popup because redirect causes silent loops on localhost with strict privacy settings
     await signInWithPopup(auth, googleProvider);
   };
 
@@ -504,7 +511,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   return (
     <TasksContext.Provider value={{ 
-      tasks, focusSessions, activeTimer, userProfile, isLoaded, appSettings,
+      tasks, focusSessions, activeTimer, userProfile, isLoaded, appSettings, authError,
       addTask, editTask, toggleTask, deleteTask, clearTasks, addFocusSession,
       playTimer, pauseTimer, stopTimer, resetTimer, updateTimerSettings, toggleBreak,
       updateSettings, clearAllData, loginIndependent, loginWithGoogle, loginAsGuest, logoutUser

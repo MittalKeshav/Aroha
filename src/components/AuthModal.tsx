@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useTasks } from '@/context/TasksContext';
 
 export default function AuthModal() {
-  const { isLoaded, userProfile, loginIndependent, loginWithGoogle, loginAsGuest } = useTasks();
+  const { loginIndependent, loginWithGoogle, loginAsGuest, userProfile, isLoaded, authError } = useTasks();
   
   const [mode, setMode] = useState<'main' | 'guest'>('main');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -16,8 +16,10 @@ export default function AuthModal() {
   
   const [guestName, setGuestName] = useState('');
   
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const error = localError || authError;
 
   // Reset modal state when user logs out so they see the fresh main screen
   React.useEffect(() => {
@@ -25,7 +27,7 @@ export default function AuthModal() {
       setMode('main');
       setIsSignUp(false);
       setLoading(false);
-      setError('');
+      setLocalError('');
       setGuestName('');
       setPassword('');
       // We can keep the email/displayName if they want, but better to clear passwords/errors
@@ -37,26 +39,26 @@ export default function AuthModal() {
 
   const handleIndependentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setLocalError('');
     setLoading(true);
     try {
       await loginIndependent(email, password, isSignUp ? displayName : undefined, isSignUp);
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Authentication failed. Please try again.');
+      setLocalError(err.message || 'Authentication failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSubmit = async () => {
-    setError('');
+    setLocalError('');
     setLoading(true);
     try {
       await loginWithGoogle();
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Google Login failed.');
+      setLocalError(err.message || 'Google Login failed.');
     } finally {
       setLoading(false);
     }
@@ -65,16 +67,16 @@ export default function AuthModal() {
   const handleGuestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!guestName.trim()) {
-      setError('Please enter a display name.');
+      setLocalError('Please enter a display name.');
       return;
     }
-    setError('');
+    setLocalError('');
     setLoading(true);
     try {
       await loginAsGuest(guestName);
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Guest Login failed.');
+      setLocalError(err.message || 'Guest Login failed.');
     } finally {
       setLoading(false);
     }
