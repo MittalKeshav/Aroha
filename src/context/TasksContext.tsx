@@ -296,10 +296,10 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   const addTask = (taskData: Omit<Task, 'id' | 'completed'>) => {
     const newTask: Task = { ...taskData, id: Date.now(), completed: false };
     setTasks(prev => [...prev, newTask]);
-    if (userProfile?.uid) {
+    if (auth.currentUser) {
       // Firestore rejects 'undefined' values completely. We must clean the object.
       const cleanTask = Object.fromEntries(Object.entries(newTask).filter(([_, v]) => v !== undefined));
-      setDoc(doc(db, `users/${userProfile.uid}/tasks/${newTask.id}`), cleanTask)
+      setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${newTask.id}`), cleanTask)
         .catch(err => console.error("Firestore Save Error (Task):", err));
     }
   };
@@ -308,9 +308,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setTasks(prev => prev.map(t => {
       if (t.id === id) {
         const updated = { ...t, ...taskData };
-        if (userProfile?.uid) {
+        if (auth.currentUser) {
           const cleanUpdated = Object.fromEntries(Object.entries(updated).filter(([_, v]) => v !== undefined));
-          setDoc(doc(db, `users/${userProfile.uid}/tasks/${id}`), cleanUpdated)
+          setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), cleanUpdated)
             .catch(err => console.error("Firestore Update Error (Task):", err));
         }
         return updated;
@@ -323,9 +323,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setTasks(prev => prev.map(t => {
       if (t.id === id) {
         const updated = { ...t, completed: !t.completed };
-        if (userProfile?.uid) {
+        if (auth.currentUser) {
           const cleanUpdated = Object.fromEntries(Object.entries(updated).filter(([_, v]) => v !== undefined));
-          setDoc(doc(db, `users/${userProfile.uid}/tasks/${id}`), cleanUpdated)
+          setDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`), cleanUpdated)
             .catch(err => console.error("Firestore Toggle Error (Task):", err));
         }
         return updated;
@@ -336,8 +336,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   const deleteTask = (id: number) => {
     setTasks(prev => prev.filter(t => t.id !== id));
-    if (userProfile?.uid) {
-      deleteDoc(doc(db, `users/${userProfile.uid}/tasks/${id}`))
+    if (auth.currentUser) {
+      deleteDoc(doc(db, `users/${auth.currentUser.uid}/tasks/${id}`))
         .catch(err => console.error("Firestore Delete Error (Task):", err));
     }
   };
@@ -358,8 +358,8 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       timestamp: Date.now()
     };
     setFocusSessions(prev => [...prev, newSession]);
-    if (userProfile?.uid) {
-      setDoc(doc(db, `users/${userProfile.uid}/sessions/${newSession.id}`), newSession)
+    if (auth.currentUser) {
+      setDoc(doc(db, `users/${auth.currentUser.uid}/sessions/${newSession.id}`), newSession)
         .catch(err => console.error("Firestore Save Error (Session):", err));
     }
   };
