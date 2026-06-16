@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="public/icons/icon-192x192.png" alt="Aroha Logo" width="100" />
   <h1>Aroha - Deep Work & Task Management</h1>
   <p>A beautifully designed, premium productivity application built to help you stay in the zone.</p>
 
