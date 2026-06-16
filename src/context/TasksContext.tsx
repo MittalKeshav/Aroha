@@ -291,7 +291,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     // 2. Stop the local timer which also clears the local backup
     setActiveTimer({
       ...prev, isPlaying: false, startTime: null, accumulatedSeconds: 0,
-      isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0,
+      isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0, notified30Sec: false,
     });
     localStorage.removeItem('zenstudy_backup_session');
 
@@ -534,7 +534,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
       return {
         ...prev, isPlaying: false, startTime: null, accumulatedSeconds: 0,
-        isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0,
+        isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0, notified30Sec: false,
       };
     });
   };
@@ -544,7 +544,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   const updateTimerSettings = (mode: 'timer'|'stopwatch', targetSeconds: number) => {
     setActiveTimer(prev => ({
       ...prev, mode, targetSeconds, accumulatedSeconds: 0, startTime: null, isPlaying: false,
-      isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0
+      isOnBreak: false, breakStartTime: null, breakAccumulatedSeconds: 0, notified30Sec: false
     }));
   };
 
