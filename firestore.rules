@@ -1,0 +1,138 @@
+rules_version = '2';
+
+// =================================================================
+// Aroha — Firestore Security Rules (hardened)
+//
+// Layer 1 (ownership, already in place): a user may only read/write
+// documents under their own /users/{uid} path. request.auth.uid must
+// match the path segment.
+//
+// Layer 2 (added here): validates the SHAPE of data being written —
+// field types, required fields, and reasonable length/size limits —
+// so an authenticated user can't write malformed or oversized junk
+// into their own documents. This mirrors the TypeScript types in
+// src/context/TasksContext.tsx (Task, FocusSession, AppSettings).
+//
+// Note on `merge: true` writes: several calls in TasksContext.tsx
+// (loginAsGuest, loginIndependent, updateSettings) use setDoc with
+// merge: true to patch just one or two fields on the user doc. Firestore
+// rules see merge writes as the FULL resulting document, so validation
+// here checks "if the field exists, it must be the right type" rather
+// than "the field must always be present" on the user doc — otherwise
+// a `{ settings: updated }` merge write would fail because it doesn't
+// also include displayName/isGuest/email in the same payload.
+// =================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+
+      // ---- Base user profile/settings document ----
+      // Written by: onAuthStateChanged init, loginIndependent (signup),
+      // loginAsGuest, updateSettings (merge: true).
+      allow read: if isOwner(userId);
+
+      allow write: if isOwner(userId)
+        && isValidUserDoc(request.resource.data);
+
+      // ---- Tasks subcollection ----
+      // Written by: addTask, editTask, toggleTask, deadline-notification
+      // updates. Matches the `Task` type in TasksContext.tsx.
+      match /tasks/{taskId} {
+        allow read: if isOwner(userId);
+
+        allow create: if isOwner(userId)
+          && isValidTask(request.resource.data);
+
+        // editTask/toggleTask send the FULL updated object (not a
+        // partial merge), so update can be validated the same way
+        // as create.
+        allow update: if isOwner(userId)
+          && isValidTask(request.resource.data);
+
+        allow delete: if isOwner(userId);
+      }
+
+      // ---- Focus sessions subcollection ----
+      // Written by: addFocusSession, the backup-timer recovery flow,
+      // and the logout flush. Matches the `FocusSession` type.
+      match /sessions/{sessionId} {
+        allow read: if isOwner(userId);
+
+        allow create: if isOwner(userId)
+          && isValidFocusSession(request.resource.data);
+
+        // Sessions are never edited after creation in the app, only
+        // created or read — no update path is exposed.
+        allow update: if false;
+
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // Deny everything else by default (no catch-all open match).
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// =================================================================
+// Helper functions
+// =================================================================
+
+function isOwner(userId) {
+  return request.auth != null && request.auth.uid == userId;
+}
+
+// Validates the /users/{userId} document. Every field is OPTIONAL
+// here (to support partial merge: true writes) but if present, must
+// be the correct type and within a sane length. This still blocks
+// someone from writing e.g. displayName as a 50,000-character string
+// or settings.defaultFocusTime as a negative number.
+function isValidUserDoc(data) {
+  return (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100))
+    && (!('isGuest' in data) || data.isGuest is bool)
+    && (!('email' in data) || data.email is string || data.email == null)
+    && (!('username' in data) || data.username is string)
+    && (!('settings' in data) || isValidSettings(data.settings));
+}
+
+function isValidSettings(settings) {
+  return settings is map
+    && (!('defaultFocusTime' in settings) || (settings.defaultFocusTime is int && settings.defaultFocusTime > 0 && settings.defaultFocusTime <= 86400))
+    && (!('defaultBreakTime' in settings) || (settings.defaultBreakTime is int && settings.defaultBreakTime > 0 && settings.defaultBreakTime <= 86400))
+    && (!('notificationsEnabled' in settings) || settings.notificationsEnabled is bool);
+}
+
+// Validates a Task document. title, completed, and dateAdded are
+// always sent by the app (required: true below); everything else is
+// optional per the `Task` type, but type-checked and length-capped
+// when present.
+function isValidTask(data) {
+  return data.title is string && data.title.size() > 0 && data.title.size() <= 200
+    && data.completed is bool
+    && data.dateAdded is string && data.dateAdded.size() == 10
+    && data.id is int
+
+    && (!('course' in data) || (data.course is string && data.course.size() <= 100))
+    && (!('time' in data) || (data.time is string && data.time.size() <= 20))
+    && (!('startTime' in data) || (data.startTime is string && data.startTime.size() <= 10))
+    && (!('endTime' in data) || (data.endTime is string && data.endTime.size() <= 10))
+    && (!('deadline' in data) || (data.deadline is string && data.deadline.size() <= 10))
+    && (!('tag' in data) || (data.tag is string && data.tag.size() <= 50))
+    && (!('notified1Day' in data) || data.notified1Day is bool)
+    && (!('notified1Hour' in data) || data.notified1Hour is bool);
+}
+
+// Validates a FocusSession document. All fields are required — the
+// app always sends the full object via addFocusSession() or the
+// backup-recovery flow, never a partial one.
+function isValidFocusSession(data) {
+  return data.id is int
+    && data.duration is int && data.duration >= 0 && data.duration <= 86400
+    && data.mode is string && (data.mode == 'timer' || data.mode == 'stopwatch')
+    && data.dateAdded is string && data.dateAdded.size() == 10
+    && data.timestamp is int;
+}
