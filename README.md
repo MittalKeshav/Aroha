@@ -38,7 +38,7 @@ Aroha is an open-source productivity web application that seamlessly blends task
 
 ### 📅 Smart Task Management
 Organize your daily tasks, set start times, end times, and priority levels. Aroha keeps everything perfectly synced in real-time.
-[![Today Tab Screenshot](public/screenshots/today-tab.png)](public/screenshots/today-tab.png)
+[![Today Tab Screenshot](public/screenshots/today.png)](public/screenshots/today.png)
 
 ### ⏱️ Deep Work Sessions
 A distraction-free, perfectly scaled Pomodoro timer and Stopwatch to track your deep work sessions. Progress is saved every second to the cloud.
