@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import { Providers } from "@/components/Providers";
+import AgentationClient from "@/components/AgentationClient";
 
 export const metadata: Metadata = {
   title: "Aroha",
@@ -25,6 +26,7 @@ export default function RootLayout({
           <main className="flex-1 md:ml-56 pt-24 md:pt-0 pb-24 md:pb-0 relative z-10">
             {children}
           </main>
+          <AgentationClient />
         </Providers>
       </body>
     </html>
