@@ -4,12 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useTasks } from '@/context/TasksContext';
 
 export default function Home() {
-  const { tasks, addTask, toggleTask, deleteTask, editTask, userProfile } = useTasks();
+  const { tasks, addTask, toggleTask, deleteTask, editTask, userProfile, quote } = useTasks();
   const [greeting, setGreeting] = useState('Good morning');
-  
-  // Daily Quote State
-  const [quote, setQuote] = useState("Focus is not about saying yes to the things you have to do. It's about saying no to the hundreds of other good ideas that there are.");
-  
+
   // Daily Image Date Seed (Using Local Timezone safely inside useEffect)
   const [todayISO, setTodayISO] = useState<string>('');
 
@@ -59,19 +56,6 @@ export default function Home() {
     const interval = setInterval(updateGreeting, 60000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (!todayISO) return;
-    // Fetch random quote
-    fetch('https://dummyjson.com/quotes/random')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.quote) {
-          setQuote(data.quote);
-        }
-      })
-      .catch(err => console.error('Failed to fetch quote:', err));
-  }, [todayISO]);
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,9 +112,13 @@ export default function Home() {
           <h2 className="text-display font-display text-white tracking-tight mb-2 drop-shadow-md">
             {greeting}, {userProfile?.displayName || 'User'}
           </h2>
-          <p className="text-body-lg font-body-lg text-white/90 drop-shadow-sm max-w-2xl italic">
-            "{quote}"
-          </p>
+          {quote === null ? (
+            <div className="h-[1.5em] w-3/4 max-w-2xl rounded-md bg-white/0 animate-pulse" aria-hidden="true" />
+          ) : (
+            <p className="text-body-lg font-body-lg text-white/90 drop-shadow-sm max-w-2xl italic">
+              &ldquo;{quote}&rdquo;
+            </p>
+          )}
         </div>
       </div>
 
