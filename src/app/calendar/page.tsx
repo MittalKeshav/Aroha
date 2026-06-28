@@ -206,7 +206,7 @@ export default function Calendar() {
           <img 
             src="/calendar_footer.png" 
             alt="Insights background" 
-            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700 mix-blend-screen"
+            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent"></div>
           <div className="absolute inset-0 p-8 flex flex-col justify-center">
