@@ -73,6 +73,7 @@ type TasksContextType = {
   userProfile: UserProfile | null;
   appSettings: AppSettings;
   isLoaded: boolean;
+  quote: string | null;
   addTask: (task: Omit<Task, 'id' | 'completed'>) => void;
   editTask: (id: number, taskData: Partial<Omit<Task, 'id' | 'completed'>>) => void;
   toggleTask: (id: number) => void;
@@ -119,6 +120,23 @@ export function TasksProvider({ children }: { children: ReactNode }) {
   
   const [isLoaded, setIsLoaded] = useState(false);
   const [authError, setAuthError] = useState('');
+
+  // Daily Quote State (generated once for the whole app; null = still loading)
+  const DEFAULT_QUOTE = "Focus is not about saying yes to the things you have to do. It's about saying no to the hundreds of other good ideas that there are.";
+  const [quote, setQuote] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch random quote
+    fetch('https://dummyjson.com/quotes/random')
+      .then(res => res.json())
+      .then(data => {
+        setQuote(data && data.quote ? data.quote : DEFAULT_QUOTE);
+      })
+      .catch(err => {
+        console.error('Failed to fetch quote:', err);
+        setQuote(DEFAULT_QUOTE);
+      });
+  }, []);
 
   // Auth Listener
   useEffect(() => {
@@ -562,7 +580,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   return (
     <TasksContext.Provider value={{ 
-      tasks, focusSessions, activeTimer, userProfile, isLoaded, appSettings, authError,
+      tasks, focusSessions, activeTimer, userProfile, isLoaded, appSettings, authError, quote,
       addTask, editTask, toggleTask, deleteTask, clearTasks, addFocusSession,
       playTimer, pauseTimer, stopTimer, resetTimer, updateTimerSettings, toggleBreak,
       updateSettings, clearAllData, loginIndependent, loginWithGoogle, loginAsGuest, logoutUser
